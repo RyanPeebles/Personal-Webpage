@@ -1,65 +1,64 @@
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useRef } from "react";
 import SlideCards from "./SlideCards";
 import FlashCard from "./FlashCard";
 
 const CardBox = () => {
 
     const [scrollY, setScrollY] = useState(0);
-    const  [scrollDisable, setScrollDisable] = useState(false);
+    
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
-            console.log("scrollY: ",window.scrollY);
-            const threshold = 560;
-            if(scrollY > threshold) {
-                setScrollDisable(true);
-                
-            }
-            else {
-                setScrollDisable(false);
-            }
+
+    const [scrollDirection, setScrollDirection] = useState('none');
+    const lastScrollRef = useRef('dowm');
+    
+        useEffect(() => {
+            const handleScroll = (event) => {
+                //setScrollY(window.scrollY);
+    
+                const currentScrollY = event.deltaY;
+                if (currentScrollY > 0) {
+                    setScrollDirection('down');
+                    lastScrollRef.current = 'down';
+                }
+                else if (currentScrollY < 0) {
+                    setScrollDirection('up');
+                    lastScrollRef.current = 'up';
+                }
+                //setLastScrollY(currentScrollY);
+                console.log("scroll: ", lastScrollRef.current);
+    
+    
+            };
+    
             
-        };
+            //TODO: add position property switching functions to pass a props to slideCards.
+            //TODO: add a function to calculate the start size and position of the cards based on screen size.
+    
+            window.addEventListener("wheel", handleScroll);
+    
+            return () => {
+                window.removeEventListener("wheel", handleScroll);
+            };
+        }, []);
+
+
 
         
-    
-
-        window.addEventListener("scroll", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-    
-
     useEffect(() => {
+        console.log("Direction Changed ---- scrollDirection: ", scrollDirection);
+   
+    }, [scrollDirection]);
 
-
-
-        const lockScroll = () => {
-            const scrollY = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-        }
-        const unlockScroll = () => {
-            const scrollY = parseInt(document.body.style.top || '0', 10) *-1;
-            document.body.style.position = '';
-            document.body.style.top = '';
-            window.scrollTo(0, scrollY);
-        }
-
-        if(scrollDisable){
-            lockScroll();
-        }
-        else {
-            unlockScroll();
-        };
-
-        return () => {
-            unlockScroll();
-        };
-    }, [scrollDisable]);
+    const calculateCardSize = (cardIndex) => {
+        const windowHeight = window.innerHeight;
+    
+        const startHeight = Math.round(windowHeight * .051);
+        
+        const cardHeight = windowHeight - (startHeight*2) - (startHeight * cardIndex);
+        //console.log("card size: " , cardHeight, "startHeight: ", startHeight, "window height: ", windowHeight);
+        return `h-[${cardHeight}px]`;
+    }
+        
 
     const calculateOpacity = (cardIndex) => {
         const cardHeight = window.innerHeight;
@@ -87,8 +86,8 @@ const CardBox = () => {
     //     const 
   return (
     
-      <div className="sticky min-h-2379 w-full top-40 bg-purple-500">
-        <SlideCards bg="bg-red-100" zIndex="z-10" opacity={calculateOpacity(0)} top = 'top-20' title="About Me">
+      <div className="relative h-full w-full bg-purple-500">
+        <SlideCards bg="bg-red-100" zIndex="z-10" opacity={calculateOpacity(0)} height = 'h-[660px]' top = 'top-[80px]'  pos='absolute' title="About Me">
         
             <div className="grid grid-cols-2 gap-0 justify-items-stretch">
             
@@ -103,7 +102,7 @@ const CardBox = () => {
             </div>
         </SlideCards>
 
-        <SlideCards bg="bg-blue-100" zIndex="z-20" opacity={calculateOpacity(1)} top="top-40" title="Projects" >
+        <SlideCards bg="bg-blue-100" zIndex="z-20" opacity={calculateOpacity(1)} height='h-screen' top="top-[613px]" pos="absolute" title="Projects" >
             
             <p>Containers for project highlights</p>
             <div className="flex flex-row gap-4">
@@ -124,7 +123,7 @@ const CardBox = () => {
             />
             </div>
         </SlideCards>
-        <SlideCards bg="bg-green-100" zIndex="z-30" opacity={calculateOpacity(2)} top="top-60" >   
+        <SlideCards bg="bg-green-100" zIndex="z-30" opacity={calculateOpacity(2)} top="top-[693px]" pos="absolute" height="h-[400px]" >   
             <h2 className="text-2xl font-bold mb-4">Card Box3</h2>
             <p>More stuff about me and/or links to more cool stuff idk yet</p>
         </SlideCards>

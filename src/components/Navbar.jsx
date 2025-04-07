@@ -6,9 +6,9 @@ const Navbar = () => {
     'text-white hover:bg-gray-900 hover:text-white rounded-md px-3 py-2';
       
     return ( 
-        <nav className=" fixed bg-orange-500 border0-b-2 border-orange-600 w-full text-white p- z-50">
+        <nav className=" fixed bg-orange-500 border0-b-2 border-orange-600 w-full text-white h-1/10 z-50">
             <div className=" mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-                <div className="relative flex h-20 items-center justify-between">
+                <div className="relative flex  h-20 items-center justify-between">
                         <div className='flex flex-1 items-center
                     justify-center md:items-stretch
                     md:justify-start'>
