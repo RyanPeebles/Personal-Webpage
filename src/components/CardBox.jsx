@@ -5,12 +5,13 @@ import FlashCard from "./FlashCard";
 const CardBox = () => {
 
     const [scrollY, setScrollY] = useState(0);
-    
+    const [topValues,setTopValues] = useState([80, 613, 653]);
 
 
     const [scrollDirection, setScrollDirection] = useState('none');
     const lastScrollRef = useRef('dowm');
     
+    const maxTops = [80, 160, 240]
         useEffect(() => {
             const handleScroll = (event) => {
                 //setScrollY(window.scrollY);
@@ -19,16 +20,23 @@ const CardBox = () => {
                 if (currentScrollY > 0) {
                     setScrollDirection('down');
                     lastScrollRef.current = 'down';
+                    updateTopValues('down', currentScrollY);
+
+
                 }
                 else if (currentScrollY < 0) {
                     setScrollDirection('up');
                     lastScrollRef.current = 'up';
+                    updateTopValues('up', currentScrollY);
                 }
                 //setLastScrollY(currentScrollY);
                 console.log("scroll: ", lastScrollRef.current);
     
     
             };
+
+
+            
     
             
             //TODO: add position property switching functions to pass a props to slideCards.
@@ -43,11 +51,36 @@ const CardBox = () => {
 
 
 
+        const updateTopValues = ( direction ,strength) => {
+            setTopValues((prevTopValues) => {
+            const newTopValues = [...prevTopValues];
+
+            for(let i = 0; i < newTopValues.length; i++) {
+                if(newTopValues[i] <= maxTops[i]) {
+                    
+                    console.log("max top value reached: ", topValues[i], "card: ", i);
+                        continue;
+                    
+                }
+                else if(newTopValues[i] > maxTops[i]) {
+                    console.log("updating top value: ", topValues[i], "card: ", i);
+                    newTopValues[i] = newTopValues[i] + (direction === 'down' ? -20: 20);
+                    console.log("new top value: ", newTopValues[i]);
+                    break;
+                }
+            }
+            return newTopValues;
+
+        });
+        };
+
+
+
         
     useEffect(() => {
-        console.log("Direction Changed ---- scrollDirection: ", scrollDirection);
+        console.log("tops changed: ", topValues);
    
-    }, [scrollDirection]);
+    }, [topValues]);
 
     const calculateCardSize = (cardIndex) => {
         const windowHeight = window.innerHeight;
@@ -58,7 +91,9 @@ const CardBox = () => {
         //console.log("card size: " , cardHeight, "startHeight: ", startHeight, "window height: ", windowHeight);
         return `h-[${cardHeight}px]`;
     }
-        
+    
+    
+
 
     const calculateOpacity = (cardIndex) => {
         const cardHeight = window.innerHeight;
@@ -87,7 +122,7 @@ const CardBox = () => {
   return (
     
       <div className="relative h-full w-full bg-purple-500">
-        <SlideCards bg="bg-red-100" zIndex="z-10" opacity={calculateOpacity(0)} height = 'h-[660px]' top = 'top-[80px]'  pos='absolute' title="About Me">
+        <SlideCards bg="bg-red-100" zIndex="z-10" opacity={calculateOpacity(0)} height = 'h-[660px]' top = {'80px'}  pos='absolute' title="About Me">
         
             <div className="grid grid-cols-2 gap-0 justify-items-stretch">
             
@@ -102,7 +137,7 @@ const CardBox = () => {
             </div>
         </SlideCards>
 
-        <SlideCards bg="bg-blue-100" zIndex="z-20" opacity={calculateOpacity(1)} height='h-screen' top="top-[613px]" pos="absolute" title="Projects" >
+        <SlideCards bg="bg-blue-100" zIndex="z-20" opacity={calculateOpacity(1)} height='h-screen' top ={ `${topValues[1]}px` } pos="absolute" title="Projects" >
             
             <p>Containers for project highlights</p>
             <div className="flex flex-row gap-4">
@@ -123,7 +158,7 @@ const CardBox = () => {
             />
             </div>
         </SlideCards>
-        <SlideCards bg="bg-green-100" zIndex="z-30" opacity={calculateOpacity(2)} top="top-[693px]" pos="absolute" height="h-[400px]" >   
+        <SlideCards bg="bg-green-100" zIndex="z-30" opacity={calculateOpacity(2)} top ={  `${topValues[2]}px` } pos="absolute" height="h-[400px]" >   
             <h2 className="text-2xl font-bold mb-4">Card Box3</h2>
             <p>More stuff about me and/or links to more cool stuff idk yet</p>
         </SlideCards>
