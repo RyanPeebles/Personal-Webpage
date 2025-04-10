@@ -4,125 +4,139 @@ import FlashCard from "./FlashCard";
 
 const CardBox = () => {
 
-    const [scrollY, setScrollY] = useState(0);
-    const [topValues,setTopValues] = useState([80, 613, 653]);
+    const [topValues,setTopValues] = useState([80, 713, 753]);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [disableMouseEvents1, setDisableMouseEvents1] = useState(false);
+    const [disableMouseEvents2, setDisableMouseEvents2] = useState(false);
 
 
-    const [scrollDirection, setScrollDirection] = useState('none');
-    const lastScrollRef = useRef('dowm');
     
     const maxTops = [80, 160, 240]
+    const startTops = [80, 713, 753]
         useEffect(() => {
+
             const handleScroll = (event) => {
-                //setScrollY(window.scrollY);
-    
+                //setDisableMouseEvents(true);
+                if(isAnimating) {
+                    return; 
+                }
+                
                 const currentScrollY = event.deltaY;
                 if (currentScrollY > 0) {
-                    setScrollDirection('down');
-                    lastScrollRef.current = 'down';
-                    updateTopValues('down', currentScrollY);
+                    scrollDown();
 
 
                 }
                 else if (currentScrollY < 0) {
-                    setScrollDirection('up');
-                    lastScrollRef.current = 'up';
-                    updateTopValues('up', currentScrollY);
+                    scrollUp();
                 }
-                //setLastScrollY(currentScrollY);
-                console.log("scroll: ", lastScrollRef.current);
+
+                setIsAnimating(true);
+
+        // Re-enable scroll detection after the animation duration (e.g., 0.5s)
+        setTimeout(() => {
+            setIsAnimating(false);
+            //setDisableMouseEvents(false);
+        }, 250); // Match the CSS transition duration
     
-    
+        // setTimeout(() => {
+        //     setDisableMouseEvents(false);
+        // },500);
             };
 
 
             
     
             
-            //TODO: add position property switching functions to pass a props to slideCards.
-            //TODO: add a function to calculate the start size and position of the cards based on screen size.
+           
     
             window.addEventListener("wheel", handleScroll);
     
             return () => {
                 window.removeEventListener("wheel", handleScroll);
             };
-        }, []);
+        }, [isAnimating]);
 
+       
+       
+       
+        const scrollUp = () => {
+           
 
-
-        const updateTopValues = ( direction ,strength) => {
             setTopValues((prevTopValues) => {
-            const newTopValues = [...prevTopValues];
-
-            for(let i = 0; i < newTopValues.length; i++) {
-                if(newTopValues[i] <= maxTops[i]) {
-                    
-                    console.log("max top value reached: ", topValues[i], "card: ", i);
-                        continue;
-                    
+                const newTopValues = [...prevTopValues];
+                for(let i = newTopValues.length -1; i > 0; i--) {
+                    if(newTopValues[i] <= maxTops[i]) {
+                        
+                        
+                        newTopValues[i] = startTops[i];
+                        setTimeout(() => {
+                            mouseStateByIndex(i);
+                        }, 500); // Delay to match the animation duration
+                        break;
+                    }
                 }
-                else if(newTopValues[i] > maxTops[i]) {
-                    console.log("updating top value: ", topValues[i], "card: ", i);
-                    newTopValues[i] = newTopValues[i] + (direction === 'down' ? -20: 20);
-                    console.log("new top value: ", newTopValues[i]);
-                    break;
-                }
-            }
-            return newTopValues;
+                return newTopValues;
+            });
+        }
+        const scrollDown = () => {
 
-        });
+            setTopValues((prevTopValues) => {
+                const newTopValues = [...prevTopValues];
+                for(let i = 1; i < newTopValues.length; i++) {
+                   
+                    if(newTopValues[i] > maxTops[i]) {
+                    mouseStateByIndex(i);
+
+                        newTopValues[i] = maxTops[i];
+                        break;
+                    }
+                }
+                return newTopValues;
+            });
         };
 
+        const mouseStateByIndex = (index) => {
+            if(index === 1){
+                setDisableMouseEvents1(!disableMouseEvents1);
+
+            }else if(index === 2){
+                setDisableMouseEvents2(!disableMouseEvents2);
+            }
+        }
 
 
         
-    useEffect(() => {
-        console.log("tops changed: ", topValues);
+    // useEffect(() => {
+    //     console.log("tops changed: ", topValues);
    
-    }, [topValues]);
+    // }, [topValues]);
 
-    const calculateCardSize = (cardIndex) => {
-        const windowHeight = window.innerHeight;
+   
     
-        const startHeight = Math.round(windowHeight * .051);
-        
-        const cardHeight = windowHeight - (startHeight*2) - (startHeight * cardIndex);
-        //console.log("card size: " , cardHeight, "startHeight: ", startHeight, "window height: ", windowHeight);
-        return `h-[${cardHeight}px]`;
+    const handleMouseClick= (index) => {
+        console.log("mouse click", index);
+        setTopValues((prevTopValues) => {
+
+            const newTopValues = [...topValues];
+            if(newTopValues[index] > maxTops[index]) {
+                newTopValues[index] = maxTops[index];
+                mouseStateByIndex(index);
+            }
+            else if(newTopValues[index] == maxTops[index]) {
+                newTopValues[index] = startTops[index];
+               // mouseStateByIndex(index);
+            }
+            return newTopValues;
+        });
     }
+
+
     
-    
-
-
-    const calculateOpacity = (cardIndex) => {
-        const cardHeight = window.innerHeight;
-        //console.log("card size: " , cardHeight);
-        const startFade = cardIndex * cardHeight;
-        const endFade = startFade + cardHeight;
-        return 'opacity-100';
-        // if(scrollY < startFade) {
-        //     return 'opacity-100';
-        // }
-        // if(scrollY > endFade) {
-        //     return 'opacity-0';
-        // }
-        // console.log("scroll: " ,scrollY, "Fade Start: ", startFade, "fade end: ", endFade);
-
-        // const opacityPercentage = 100 - ((scrollY-startFade)/cardHeight) * 100;
-        // const opacityStep = Math.round(opacityPercentage/10) * 10;
-
-        // console.log("opacity values ",opacityStep, opacityPercentage);
-
-        // return `opacity-${opacityStep}`;
-    };
-
-    // const calculateCardSize = (cardIndex) => {
-    //     const 
   return (
     
       <div className="relative h-full w-full bg-purple-500">
-        <SlideCards bg="bg-red-100" zIndex="z-10" opacity={calculateOpacity(0)} height = 'h-[660px]' top = {'80px'}  pos='absolute' title="About Me">
+        <SlideCards  bg="bg-red-100" zIndex="z-10"  height = 'h-screen' top = '80px' pos='absolute' title="About Me" disableMouseEvents = {true} maxTop = {maxTops[0]}>
         
             <div className="grid grid-cols-2 gap-0 justify-items-stretch">
             
@@ -137,7 +151,7 @@ const CardBox = () => {
             </div>
         </SlideCards>
 
-        <SlideCards bg="bg-blue-100" zIndex="z-20" opacity={calculateOpacity(1)} height='h-screen' top ={ `${topValues[1]}px` } pos="absolute" title="Projects" >
+        <SlideCards onClick = {() =>{handleMouseClick(1)}} bg="bg-blue-100" zIndex="z-20"  height='h-screen' top ={ `${topValues[1]}px` } pos="absolute" title="Projects" disableMouseEvents = {disableMouseEvents1} maxTop = {maxTops[1]} >
             
             <p>Containers for project highlights</p>
             <div className="flex flex-row gap-4">
@@ -158,7 +172,7 @@ const CardBox = () => {
             />
             </div>
         </SlideCards>
-        <SlideCards bg="bg-green-100" zIndex="z-30" opacity={calculateOpacity(2)} top ={  `${topValues[2]}px` } pos="absolute" height="h-[400px]" >   
+        <SlideCards  onClick = {()=>{handleMouseClick(2)}} bg="bg-green-100" zIndex="z-30"  top ={  `${topValues[2]}px` } pos="absolute" height="h-screen" disableMouseEvents = {disableMouseEvents2} maxTop = {maxTops[2]}>   
             <h2 className="text-2xl font-bold mb-4">Card Box3</h2>
             <p>More stuff about me and/or links to more cool stuff idk yet</p>
         </SlideCards>
