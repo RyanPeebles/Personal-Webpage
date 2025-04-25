@@ -6,3 +6,44 @@ body{
 body::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Edge */
   }
+
+  @theme{
+
+  --animate-slideOut: slide-out 1s ease-in-out forwards;
+
+  @keyframes slide-out {
+    0%{
+      /* opacity:1; */
+      transform: translateY(0) scaleX(1);
+      
+      /* z-index: 40; */
+    }
+   
+    100% {
+      transform: translateY(40px) scaleX(.95);
+      /* opacity: 0; */
+      /* z-index: 0; */
+    
+      
+    }
+    
+  }
+
+  --animate-fadeIn : fade-in 1s ease-in-out forwards;
+
+  @keyframes fade-in {
+    0%{
+      opacity:0;
+      transform: translateY(60px);
+      transform: scaleX(.95);
+    }
+   
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+      transform: scaleX(1);
+      
+    }
+    
+  }
+}

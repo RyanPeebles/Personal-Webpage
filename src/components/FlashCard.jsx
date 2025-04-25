@@ -5,14 +5,14 @@ const FlashCard = ({ Title ="project",Description ="Description", link ="linkTo"
 
     return (
         <>
-        <div className="w-lg border-solid border-black border-2 rounded-lg bg-white shadow-md grid justify-items-stretch p-4 m-2">
+        <div className="bg-[#121212] w-lg border-solid border-[#1E1E1E] border-2 rounded-lg  shadow-md grid justify-items-stretch p-4 m-2">
 
 
             <h2>{Title}</h2>
-            <p>project description Here</p>
+            <p>{Description}</p>
             <Link
              to={link}
-              className="justify-self-end inline-block bg-indigo-500 text-white rounded-lg px-4 py-2 hover:bg-indigo-600"
+              className="justify-self-end inline-block bg-[#00FFD1] text-[#121212] rounded-lg px-4 py-2 hover:bg-[#FF4F81]  max-h-40"
             >
                 View Project GitHub
             </Link>

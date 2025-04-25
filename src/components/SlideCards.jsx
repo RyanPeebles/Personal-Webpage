@@ -5,7 +5,7 @@ import { useEffect, useState, useRef} from "react";
 
 
 
-const SlideCards = ({children, bg = 'bg-red-100', zIndex='z-10',  top = '0px', height = 'h-1/10', pos = 'fixed', title='cardBox', disableMouseEvents = false, onClick}) => {
+const SlideCards = ({children, duration = '500', bg = 'bg-red-100', opacity = '1',zIndex='zIndex: 0',  top = '0px', height = 'h-1/10', width = '100px', pos = 'fixed', title='cardBox', disableMouseEvents = false, cardOpen =false, closing = false,  onClick}) => {
   
   const [isAnimating, setIsAnimating] = useState(false);
   const [startTop, setStartTopsState] = useState(0);
@@ -20,7 +20,7 @@ const SlideCards = ({children, bg = 'bg-red-100', zIndex='z-10',  top = '0px', h
     const handleMouseEnter = (e) => {
       
       if(disableMouseEvents || isAnimating) return;
-      console.log("mouse over");
+      
       const currentTop = parseInt(window.getComputedStyle(e.currentTarget).top, 10) || 0;
       
       const newTop = currentTop - 40;
@@ -37,14 +37,10 @@ const SlideCards = ({children, bg = 'bg-red-100', zIndex='z-10',  top = '0px', h
 
 
 
-    useEffect(() => {
-      console.log("disableMouseEvents:", disableMouseEvents);
-  }, [disableMouseEvents]);
-
 
   const handleMouseLeave = (e) => {
       if(disableMouseEvents) return;
-      console.log("mouse out");
+      
 
       const currentTop = parseInt(window.getComputedStyle(e.currentTarget).top, 10) || 0;
       
@@ -65,9 +61,10 @@ const SlideCards = ({children, bg = 'bg-red-100', zIndex='z-10',  top = '0px', h
         
     }
   return (
-    <div ref={cardRef} onClick = {onClick} onMouseEnter={disableMouseEvents ? ()=>{console.log("mouse disabled")} : handleMouseEnter} onMouseLeave={ disableMouseEvents ?  ()=>{console.log("mouse disabled")} : handleMouseLeave} className={`${bg} ${zIndex}  ${height} ${pos} rounded-none w-full border-3 border-black`} style ={{top, transition: 'top 0.5s ease-in-out'}}>
+    <div ref={cardRef} onClick = {onClick} onMouseEnter={disableMouseEvents ? ()=> null : handleMouseEnter} onMouseLeave={ disableMouseEvents ?  ()=>{console.log("mouse disabled")} : handleMouseLeave}
+     className={ `${bg} ${height} ${pos}  transition-all ease-in-out shadow-xl rounded-none p-8 m-0 border-3 border-[#1E1E1E] text-[#EDEDED] `} style ={{ transitionDuration: `${duration}ms`,top, width, zIndex, opacity}}>
         
-        <h2 className= "text-2xl font-bold mb-4" >{title}</h2>
+        <h2 className= "text-2xl font-bold mb-0" >{title}</h2>
         {children}
 
 
