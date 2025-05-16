@@ -62,7 +62,7 @@ const SlideCards = ({children, duration = '500', bg = 'bg-red-100', opacity = '1
     }
   return (
     <div ref={cardRef} onClick = {onClick} onMouseEnter={disableMouseEvents ? ()=> null : handleMouseEnter} onMouseLeave={ disableMouseEvents ?  ()=>{console.log("mouse disabled")} : handleMouseLeave}
-     className={ `${bg} ${height} ${pos}  transition-all ease-in-out shadow-xl rounded-none p-8 m-0 border-3 border-[#1E1E1E] text-[#EDEDED] `} style ={{ transitionDuration: `${duration}ms`,top, width, zIndex, opacity}}>
+     className={ `${bg} ${height} ${pos}  transition-all ease-in-out shadow-xl rounded-none p-8 m-0  text-[#EDEDED] `} style ={{ transitionDuration: `${duration}ms`,top, width, zIndex, opacity}}>
         
         <h2 className= "text-2xl font-bold mb-0" >{title}</h2>
         {children}

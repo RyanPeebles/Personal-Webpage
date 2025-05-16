@@ -28,6 +28,17 @@ body::-webkit-scrollbar {
     }
     
   }
+  --animate-fillText: fillText 40s linear forwards;
+
+  @keyframes fillText {
+    0%{
+      background-size: 0% 100%;
+    }
+    100% {
+      background-size: 100% 100%;
+    }
+    
+  }
 
   --animate-fadeIn : fade-in 1s ease-in-out forwards;
 
@@ -46,4 +57,26 @@ body::-webkit-scrollbar {
     }
     
   }
+
+  
+}
+.icons {
+  width : 24px;
+  height : 24px;
+  background-image: url('src/assets/arrow_pause_play-Sheet.png');
+  background-repeat: no-repeat;
+  display: inline-block;
+   
+}
+.icons-0{
+  background-position: 0px 0px;
+}
+.icons-1{
+  background-position: -24px 0px;
+}
+.icons-2{
+  background-position: -48px 0px;
+}
+.icons-3{
+  background-position: -72px 0px;
 }

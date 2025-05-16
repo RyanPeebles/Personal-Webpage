@@ -1,8 +1,8 @@
-import { use, useEffect, useState, useRef } from "react";
+import { use, useEffect, useState, useRef, forwardRef, useImperativeHandle} from "react";
 import SlideCards from "./SlideCards";
 import FlashCard from "./FlashCard";
 
-const CardBox = () => {
+const CardBox = forwardRef((props,ref) => {
 
     const [topValues,setTopValues] = useState([40, 60, 80, 100]);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -18,14 +18,26 @@ const CardBox = () => {
     const [opacities, setOpacities] = useState([1, 1, 1, 1]);
     const [closing, setClosing] = useState([false, false, false, false]);
     const [duration, setDuration] = useState([500,500,500,500]);
+    const [color, setColoring] = useState(['bg-[#2C2C2E]', 'bg-[#212222]', 'bg-[#1B1B1C]', 'bg-[#151516]']);
+    const [previousOpened, setPreviousOpened] = useState(3);
+    const [rank, setRank] = useState([0, 1, 2, 3]);
 
     const startWidths = useRef(null);
     const widthStep = window.innerWidth * 0.05;
     const topStep = window.innerHeight * 0.03;
     const maxTops = [40, 40, 40, 40]
     const startTops = [40, 60, 80, 100]
+    const startColors = ['bg-[#2C2C2E]', 'bg-[#212222]', 'bg-[#1B1B1C]', 'bg-[#151516]'];
     
-
+        useImperativeHandle(ref, () => ({
+            callScrollDown: () => {
+                scrollDown();
+            },
+            callScrollUp: () => {
+                scrollUp();
+            }
+        }));
+     
   
     
 
@@ -36,7 +48,9 @@ const CardBox = () => {
             setWidths(newWidths);
             startWidths.current= [...newWidths];
 
-            const newHeights = [window.innerHeight - 100, window.innerHeight - 100, window.innerHeight - 100, window.innerHeight - 100];
+            // const initialHeight = (window.innerHeight/10) * 7;
+            // const newHeights = [initialHeight, initialHeight, initialHeight, initialHeight];
+            // setHeights(newHeights);
 
             setCurrentDrawer(0);
 
@@ -70,7 +84,7 @@ const CardBox = () => {
         setTimeout(() => {
             setIsAnimating(false);
             //setDisableMouseEvents(false);
-        }, 250); // Match the CSS transition duration
+        }, 550); // Match the CSS transition duration
     
         // setTimeout(() => {
         //     setDisableMouseEvents(false);
@@ -101,17 +115,17 @@ const CardBox = () => {
                 });
                 setOpacities((prevOpacities) => {
                     const newOpacities = [...prevOpacities];
-                    newOpacities[index] = .5;
+                    newOpacities[index] = 0;
                     return newOpacities;
                 });
                 setTopValues((prevTopValues) => {
                     const newTopValues = [...prevTopValues];
-                    newTopValues[index] = window.innerHeight;
+                    newTopValues[index] =0;
                     return newTopValues;
                 });
                 setWidths((prevWidths) => {
                     const newWidths = [...prevWidths];
-                    newWidths[index] = startWidths.current[3] - widthStep - widthStep;
+                    newWidths[index] = window.innerWidth;
                     return newWidths;
                 });
 
@@ -125,14 +139,24 @@ const CardBox = () => {
                    
                     setTopValues((prevTopValues) => {
                         const newTopValues = [...prevTopValues];
-                        newTopValues[index] = window.innerHeight - 100;
+                        newTopValues[index] = startTops[3] + 100;
                         return newTopValues;
+                    });
+                    setWidths((prevWidths) => {
+                        const newWidths = [...prevWidths];
+                        newWidths[index] = startWidths.current[3]- widthStep;
+                        return newWidths;
                     });
                     
                     setZIndexs((prevZIndexs) => {
                         const newZIndexs = [...prevZIndexs];
-                        newZIndexs[index] = -10;
+                        newZIndexs[index] = 0;
                         return newZIndexs;
+                    });
+                    setColoring((prevColor) => {
+                        const newColor = [...prevColor];
+                        newColor[index] = startColors[3];
+                        return newColor;
                     });
                     
                 },500);
@@ -163,37 +187,107 @@ const CardBox = () => {
                 }, 550); // Delay to match the animation duration
             
         }
+
+        const reverseAnimation = (index) => {
+                setTopValues((prevTopValues) => {
+                    const newTopValues = [...prevTopValues];
+                    newTopValues[index] = window.innerHeight - 100;
+                    return newTopValues;
+                });
+                
+                setOpacities((prevOpacities) => {
+                    const newOpacities = [...prevOpacities];
+                    newOpacities[index] =.5;
+                    return newOpacities;
+                });
+                setTimeout(() => {
+                    setDuration((prevDuration) => {
+                        const newDuration = [...prevDuration];
+                        newDuration[index] = 0;
+                        return newDuration;
+                    });
+                   
+                    setZIndexs((prevZIndexs) => {
+                        const newZIndexs = [...prevZIndexs];
+                        newZIndexs[index] = 40;
+                        return newZIndexs;
+                    });
+                }, 500); // Delay to match the animation duration
+                setTimeout(() => { 
+                    setDuration((prevDuration) => {
+                        const newDuration = [...prevDuration];
+                        newDuration[index] = 500;
+                        return newDuration;
+                    });
+                    setOpacities((prevOpacities) => {
+                        const newOpacities = [...prevOpacities];
+                        newOpacities[index] = 1;
+                        return newOpacities;
+                    });
+                    setWidths((prevWidths) => {
+                        const newWidths = [...prevWidths];
+                        console.log("final width", startWidths.current[3]);
+                        console.log("widths",startWidths.current);
+                        newWidths[index] = startWidths.current[0];
+                        return newWidths;
+                    });
+                    setTopValues((prevTopValues) => {
+                        const newTopValues = [...prevTopValues];
+                        newTopValues[index] = startTops[0];
+                        return newTopValues;
+                    });
+                }, 550); // Delay to match the animation duration
+
+        }
        
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
           }
        
-        const scrollUp = () => {
+        const scrollUp = async () => {
            
 
-            setTopValues((prevTopValues) => {
-                const newTopValues = [...prevTopValues];
-                for(let i = newTopValues.length -1; i > 0; i--) {
-                    if(newTopValues[i] <= maxTops[i]) {
-                        
-                        
-                        newTopValues[i] = startTops[i];
-                        setTimeout(() => {
-                            mouseStateByIndex(i);
-                        }, 500); // Delay to match the animation duration
-                        break;
+            let j = previousOpened;
+            for(let i = 0; i < 4; i++) {
+                console.log("current drawer", currentDrawer);
+                console.log("next drawer", nextDrawer);
+                if(j === previousOpened) {
+                    console.log("open drawer", j);
+                    reopenCard(j);
+                    
+                    setNextDrawer((prevNextDrawer) => prevNextDrawer - 1);
+                    if(nextDrawer <= 0) {
+                        setNextDrawer(3);
                     }
+                await sleep(100);
+               
+                }else{
+                    console.log("slide drawer", j);
+                    //openCard(i);
+                    setColoring((prevColor) => {
+                        const newColor = [...prevColor]; 
+                        newColor[j] = 'bg-[#1E1E1E]';
+                        return newColor;
+                    });
+                    lowerTop(j);
+                    shrinkWidth(j);
+                    lowerZIndex(j); 
                 }
-                return newTopValues;
-            });
+                j--;
+                if(j < 0) {
+                    j = 3;
+                }
+            }
         }
         const scrollDown =  async () => {
             let j = currentDrawer;
+            incRank();
             for(let i = 0; i < 4; i++) {
                 
 
                 console.log("current drawer", currentDrawer);
-                console.log("next drawer", nextDrawer);
+                console.log("next drawer", nextDrawer)
+                
                 if(j === currentDrawer) {
                     console.log("close drawer", j);
                     closeDrawer(j);
@@ -216,9 +310,11 @@ const CardBox = () => {
                     raiseTop(j);
                     expandWidth(j);
                     raiseZIndex(j);
+                    changeColor(j);
                     
                     
                 }
+                console.log("rank", rank);
                 j++;
                 if(j > 3) {
                     j = 0;
@@ -227,6 +323,62 @@ const CardBox = () => {
             
             
         };
+
+        const incRank = () => {
+            setRank((prevRank) => { 
+                const newRank = [...prevRank];
+                for(let i = 0; i < newRank.length; i++) {
+                    if(newRank[i] === 3) {
+                        newRank[i] = 0;
+                    }else{
+                        newRank[i] = newRank[i] + 1;
+                    }
+                }
+                  return newRank;
+         
+            });
+        }
+
+        const decRank = () => {
+            setRank((prevRank) => { 
+                const newRank = [...prevRank];
+                for(let i = 0; i < newRank.length; i++) {
+                    if(newRank[i] === 0) {
+                        newRank[i] = 3;
+                    }else{
+                        newRank[i] = newRank[i] - 1;
+                    }
+                }
+                return newRank;
+                        
+            });
+                
+        }
+
+        const changeColor = (index) => {
+            setColoring((prevColor) => {
+                const newColor = [...prevColor];
+                newColor[index] = startColors[rank[index]];
+                return newColor;
+            });
+        }
+
+        const reopenCard = (index) => {
+
+            console.log("reopen drawer", index);
+            setColoring((prevColor) => {
+                const newColor = [...prevColor];
+                newColor[index] = 'bg-[#2C2C2E]';
+                return newColor;
+            });
+            setCurrentDrawer(index);
+            let j = index -1;
+            if(j < 0) {
+                j = 3;
+            }
+            setPreviousOpened(j);
+           reverseAnimation(index);
+        }
         const closeDrawer = (index) => {
            
             // setClosing((prevClosing) => {
@@ -235,6 +387,8 @@ const CardBox = () => {
             //     return newClosing;
             // });
             console.log("animating", index);
+            
+            setPreviousOpened(index);
             handleAnimation(index);
         }
 
@@ -264,6 +418,11 @@ const CardBox = () => {
                 return updatedOpenDrawers;
                
             });
+            setColoring((prevColor) => {
+                const newColor = [...prevColor];
+                newColor[index] = startColors[0];
+                return newColor;
+            });
             
             setTopValues((prevTopValues) => {
                 const newTopValues = [...prevTopValues];
@@ -287,6 +446,13 @@ const CardBox = () => {
             setTopValues((prevTopValues) => {
                 const newTopValues = [...prevTopValues];
                 newTopValues[index] = newTopValues[index] - topStep;
+                return newTopValues;
+            });
+        }
+        const lowerTop = (index) => {
+            setTopValues((prevTopValues) => {
+                const newTopValues = [...prevTopValues];
+                newTopValues[index] = newTopValues[index] + topStep;
                 return newTopValues;
             });
         }
@@ -343,8 +509,8 @@ const CardBox = () => {
     
   return (
     
-      <div className="fixed grid grid-col max-w-screen place-items-center box-border h-full w-screen  bg-[#121212]">
-        <SlideCards duration = {`${duration[0]}`}  bg="bg-[#2C2C2E]" zIndex={ `${zIndexs[0]}`}  height = 'h-7/10'  width = { `${widths[0]}px`} top = { `${topValues[0]}px` } pos='absolute' title="About Me" disableMouseEvents = {true} cardOpen = {openDrawers[0]} closing = {closing[0]} maxTop = {maxTops[0]} opacity = {opacities[0]} >
+      <div className="relative grid grid-col max-w-screen place-items-center box-border h-screen w-screen  bg-[#121212]">
+        <SlideCards duration = {`${duration[0]}`}  bg={`${color[0]}`} zIndex={ `${zIndexs[0]}`}  height = 'h-7/10'  width = { `${widths[0]}px`} top = { `${topValues[0]}px` } pos='absolute' title="About Me" disableMouseEvents = {true} cardOpen = {openDrawers[0]} closing = {closing[0]} maxTop = {maxTops[0]} opacity = {opacities[0]} >
         
             <div className="grid grid-cols-2 gap-0 w-full h-full">
             
@@ -361,7 +527,7 @@ const CardBox = () => {
             </div>
         </SlideCards>
 
-        <SlideCards  duration = {`${duration[1]}`} bg="bg-[#1E1E1E]" zIndex={ `${zIndexs[1]}`}  height='h-7/10' width={ `${widths[1]}px`} top ={ `${topValues[1]}px` } pos="absolute" title="Projects" disableMouseEvents = {true} maxTop = {maxTops[1]} cardOpen= {openDrawers[1]} closing={closing[1]} opacity= {opacities[1]}>
+        <SlideCards  duration = {`${duration[1]}`} bg={`${color[1]}`} zIndex={ `${zIndexs[1]}`}  height='h-7/10' width={ `${widths[1]}px`} top ={ `${topValues[1]}px` } pos="absolute" title="Projects" disableMouseEvents = {true} maxTop = {maxTops[1]} cardOpen= {openDrawers[1]} closing={closing[1]} opacity= {opacities[1]}>
             
             <h3>Links to my personal projects</h3>
             <div className="flex flex-nowrap basis-lg gap-4 mt-4">
@@ -392,7 +558,7 @@ front-end technologies (JavaScript, HTML, CSS)"
             />
             </div>
         </SlideCards>
-        <SlideCards  duration = {`${duration[2]}`} bg="bg-[#2C2C2E]" zIndex={ `${zIndexs[2]}`} title="Work And Education" width = { `${widths[2]}px`} top ={  `${topValues[2]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[2]} cardOpen = {openDrawers[2]} closing = {closing[2]} opacity= {opacities[2]}>
+        <SlideCards  duration = {`${duration[2]}`} bg={`${color[2]}`} zIndex={ `${zIndexs[2]}`} title="Work And Education" width = { `${widths[2]}px`} top ={  `${topValues[2]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[2]} cardOpen = {openDrawers[2]} closing = {closing[2]} opacity= {opacities[2]}>
         <h3>My work experience and education</h3>
         <h2 className="text-2xl font-bold mb-1 mt-4 ">Education</h2>
                <ol className="list-disc list-inside">
@@ -436,7 +602,7 @@ front-end technologies (JavaScript, HTML, CSS)"
                 </ol>
        
         </SlideCards>
-        <SlideCards  duration = {`${duration[3]}`} bg="bg-[#2C2C2E]" zIndex={ `${zIndexs[3]}`} title="Hobbies and More" width = { `${widths[3]}px`} top ={  `${topValues[3]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[3]} cardOpen = {openDrawers[3]} closing={closing[3]} opacity= {opacities[3]}>   
+        <SlideCards  duration = {`${duration[3]}`} bg={`${color[3]}`} zIndex={ `${zIndexs[3]}`} title="Hobbies and More" width = { `${widths[3]}px`} top ={  `${topValues[3]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[3]} cardOpen = {openDrawers[3]} closing={closing[3]} opacity= {opacities[3]}>   
             
             <h3>More about my interest in Games, Art, and more!</h3>
         </SlideCards>
@@ -445,5 +611,5 @@ front-end technologies (JavaScript, HTML, CSS)"
      
     
   );
-}
+});
 export default CardBox;
