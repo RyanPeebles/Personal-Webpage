@@ -4,56 +4,69 @@ import FlashCard from "./FlashCard";
 
 const CardBox = forwardRef((props,ref) => {
 
-    const [topValues,setTopValues] = useState([40, 60, 80, 100]);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [disableMouseEvents1, setDisableMouseEvents1] = useState(false);
-    const [disableMouseEvents2, setDisableMouseEvents2] = useState(false);
-    const [openDrawers, setOpenDrawers] = useState([true, false, false, false]);
-    const [hasOpened, setHasOpened] = useState([true, false, false, false]);
-    const [widths, setWidths] = useState([98, 98, 98, 98]);
-    const [heights, setHeights] = useState([100, 100, 100, 100]);
-    const [zIndexs, setZIndexs] = useState([40, 30, 20, 10]);
-    const [nextDrawer, setNextDrawer] = useState(1);
-    const [currentDrawer, setCurrentDrawer] = useState(0);
-    const [opacities, setOpacities] = useState([1, 1, 1, 1]);
-    const [closing, setClosing] = useState([false, false, false, false]);
-    const [duration, setDuration] = useState([500,500,500,500]);
-    const [color, setColoring] = useState(['bg-[#2C2C2E]', 'bg-[#212222]', 'bg-[#1B1B1C]', 'bg-[#151516]']);
-    const [previousOpened, setPreviousOpened] = useState(3);
+   
+    // const [isAnimating, setIsAnimating] = useState(false);
+    // const [disableMouseEvents1, setDisableMouseEvents1] = useState(false);
+    // const [disableMouseEvents2, setDisableMouseEvents2] = useState(false);
+   
+    // const [zIndexs, setZIndexs] = useState([40, 30, 20, 10]);
+    // const [nextDrawer, setNextDrawer] = useState(1);
+    
+  
+   
     const [rank, setRank] = useState([0, 1, 2, 3]);
 
+    const cardRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+   
+    const currentCard = useRef(0);
+    const nextDrawer = useRef(1);
+    const previousCard = useRef(3);
+
     const startWidths = useRef(null);
+    const isAnimatingRef = useRef(false);
     const widthStep = window.innerWidth * 0.05;
     const topStep = window.innerHeight * 0.03;
     const maxTops = [40, 40, 40, 40]
     const startTops = [40, 60, 80, 100]
-    const startColors = ['bg-[#2C2C2E]', 'bg-[#212222]', 'bg-[#1B1B1C]', 'bg-[#151516]'];
-    
+    const startColors = ['#2C2C2E', '#212222', '#1B1B1C', '#151516'];
+     const zIndexes = [40,30,20,10];
         useImperativeHandle(ref, () => ({
             callScrollDown: () => {
                 scrollDown();
             },
             callScrollUp: () => {
                 scrollUp();
-            }
+            },
+            currentCardRef: currentCard.current,
         }));
      
   
-    
+
 
         useEffect(() => {
             const initialWidth = window.innerWidth -( window.innerWidth * 0.05);
            
-            const newWidths = [initialWidth, initialWidth - widthStep, initialWidth - widthStep*2, initialWidth - widthStep*3];
-            setWidths(newWidths);
-            startWidths.current= [...newWidths];
+           startWidths.current = [initialWidth, initialWidth - widthStep, initialWidth - widthStep*2, initialWidth - widthStep*3];
+            
+            
+            const cardHeight = window.innerHeight *.7;
 
             // const initialHeight = (window.innerHeight/10) * 7;
             // const newHeights = [initialHeight, initialHeight, initialHeight, initialHeight];
             // setHeights(newHeights);
 
-            setCurrentDrawer(0);
+            currentCard.current = 0;
 
+            console.log("Is my ref ready?", cardRefs[0].current);
+
+            cardRefs.forEach((card, index) => {
+                card.current.callWidth(startWidths.current[index]);
+                card.current.callTopPosition(startTops[index]);
+                card.current.callColorChange(startColors[index]);
+                card.current.callHeight(cardHeight);
+                card.current.callZindex(zIndexes[index]);
+            });
+           
             
             
             }  , []);
@@ -64,10 +77,10 @@ const CardBox = forwardRef((props,ref) => {
 
             const handleScroll = (event) => {
                 //setDisableMouseEvents(true);
-                if(isAnimating) {
-                    return; 
-                }
-                setIsAnimating(true);
+                // if(isAnimatingRef.current) {
+                //     return; 
+                // }
+                // isAnimatingRef.current = true;
                 const currentScrollY = event.deltaY;
                 if (currentScrollY > 0) {
                     scrollDown();
@@ -81,10 +94,10 @@ const CardBox = forwardRef((props,ref) => {
                 
 
         // Re-enable scroll detection after the animation duration (e.g., 0.5s)
-        setTimeout(() => {
-            setIsAnimating(false);
-            //setDisableMouseEvents(false);
-        }, 550); // Match the CSS transition duration
+        // setTimeout(() => {
+        //     isAnimatingRef.current = false;
+        //     //setDisableMouseEvents(false);
+        // }, 550); // Match the CSS transition duration
     
         // setTimeout(() => {
         //     setDisableMouseEvents(false);
@@ -102,140 +115,164 @@ const CardBox = forwardRef((props,ref) => {
             return () => {
                 window.removeEventListener("wheel", handleScroll);
             };
-        }, [isAnimating]);
+        }, []);
 
        
         const handleAnimation = (index) => {
            
-               
-                setDuration((prevDuration) => {
-                    const newDuration = [...prevDuration];
-                    newDuration[index] = 500;
-                    return newDuration;
-                });
-                setOpacities((prevOpacities) => {
-                    const newOpacities = [...prevOpacities];
-                    newOpacities[index] = 0;
-                    return newOpacities;
-                });
-                setTopValues((prevTopValues) => {
-                    const newTopValues = [...prevTopValues];
-                    newTopValues[index] =0;
-                    return newTopValues;
-                });
-                setWidths((prevWidths) => {
-                    const newWidths = [...prevWidths];
-                    newWidths[index] = window.innerWidth;
-                    return newWidths;
-                });
+               const cardRef = cardRefs[index];
+               console.log("cardRef", cardRef.current);
+                // setDuration((prevDuration) => {
+                //     const newDuration = [...prevDuration];
+                //     newDuration[index] = 500;
+                //     return newDuration;
+                // });
+                cardRef.current.callDuration(500);
 
+                // setOpacities((prevOpacities) => {
+                //     const newOpacities = [...prevOpacities];
+                //     newOpacities[index] = 0;
+                //     return newOpacities;
+                // });
+                cardRef.current.callOpacity(0);
+                // setTopValues((prevTopValues) => {
+                //     const newTopValues = [...prevTopValues];
+                //     newTopValues[index] =0;
+                //     return newTopValues;
+                // });
+                cardRef.current.callTopPosition(0);
+                // setWidths((prevWidths) => {
+                //     const newWidths = [...prevWidths];
+                //     newWidths[index] = window.innerWidth;
+                //     return newWidths;
+                // });
+                cardRef.current.callWidth(window.innerWidth);
                 setTimeout(() => {
                     
-                    setDuration((prevDuration) => {
-                        const newDuration = [...prevDuration];
-                        newDuration[index] = 0;
-                        return newDuration;
-                    });
+                    // setDuration((prevDuration) => {
+                    //     const newDuration = [...prevDuration];
+                    //     newDuration[index] = 0;
+                    //     return newDuration;
+                    // });
+                    cardRef.current.callDuration(0);
                    
-                    setTopValues((prevTopValues) => {
-                        const newTopValues = [...prevTopValues];
-                        newTopValues[index] = startTops[3] + 100;
-                        return newTopValues;
-                    });
-                    setWidths((prevWidths) => {
-                        const newWidths = [...prevWidths];
-                        newWidths[index] = startWidths.current[3]- widthStep;
-                        return newWidths;
-                    });
-                    
-                    setZIndexs((prevZIndexs) => {
-                        const newZIndexs = [...prevZIndexs];
-                        newZIndexs[index] = 0;
-                        return newZIndexs;
-                    });
-                    setColoring((prevColor) => {
-                        const newColor = [...prevColor];
-                        newColor[index] = startColors[3];
-                        return newColor;
-                    });
+                    // setTopValues((prevTopValues) => {
+                    //     const newTopValues = [...prevTopValues];
+                    //     newTopValues[index] = startTops[3] + 100;
+                    //     return newTopValues;
+                    // });
+                    cardRef.current.callTopPosition(startTops[3] + 100);
+                    // setWidths((prevWidths) => {
+                    //     const newWidths = [...prevWidths];
+                    //     newWidths[index] = startWidths.current[3]- widthStep;
+                    //     return newWidths;
+                    // });
+                    cardRef.current.callWidth(startWidths.current[3]- widthStep);
+                    // setZIndexs((prevZIndexs) => {
+                    //     const newZIndexs = [...prevZIndexs];
+                    //     newZIndexs[index] = 0;
+                    //     return newZIndexs;
+                    // });
+                    cardRef.current.callZindex(0);
+                    // setColoring((prevColor) => {
+                    //     const newColor = [...prevColor];
+                    //     newColor[index] = startColors[3];
+                    //     return newColor;
+                    // });
+                    cardRef.current.callColorChange(startColors[3]);
                     
                 },500);
                 
                 setTimeout(() => {
-                    setDuration((prevDuration) => {
-                        const newDuration = [...prevDuration];
-                        newDuration[index] = 500;
-                        return newDuration;
-                    });
-                    setOpacities((prevOpacities) => {
-                        const newOpacities = [...prevOpacities];
-                        newOpacities[index] = 1;
-                        return newOpacities;
-                    });
-                    setTopValues((prevTopValues) => {
-                        const newTopValues = [...prevTopValues];
-                        newTopValues[index] = startTops[3];
-                        return newTopValues;
-                    });
-                    setWidths((prevWidths) => {
-                        const newWidths = [...prevWidths];
-                        console.log("final width", startWidths.current[3]);
-                        console.log("widths",startWidths.current);
-                        newWidths[index] = startWidths.current[3];
-                        return newWidths;
-                    });
+                    // setDuration((prevDuration) => {
+                    //     const newDuration = [...prevDuration];
+                    //     newDuration[index] = 500;
+                    //     return newDuration;
+                    // });
+                    cardRef.current.callDuration(500);
+                    // setOpacities((prevOpacities) => {
+                    //     const newOpacities = [...prevOpacities];
+                    //     newOpacities[index] = 1;
+                    //     return newOpacities;
+                    // });
+                    cardRef.current.callOpacity(1);
+                    // setTopValues((prevTopValues) => {
+                    //     const newTopValues = [...prevTopValues];
+                    //     newTopValues[index] = startTops[3];
+                    //     return newTopValues;
+                    // });
+                    cardRef.current.callTopPosition(startTops[3]);
+                    // setWidths((prevWidths) => {
+                    //     const newWidths = [...prevWidths];
+                    //     console.log("final width", startWidths.current[3]);
+                    //     console.log("widths",startWidths.current);
+                    //     newWidths[index] = startWidths.current[3];
+                    //     return newWidths;
+                    // });
+                    cardRef.current.callWidth(startWidths.current[3]);
                 }, 550); // Delay to match the animation duration
             
         }
 
         const reverseAnimation = (index) => {
-                setTopValues((prevTopValues) => {
-                    const newTopValues = [...prevTopValues];
-                    newTopValues[index] = window.innerHeight - 100;
-                    return newTopValues;
-                });
-                
-                setOpacities((prevOpacities) => {
-                    const newOpacities = [...prevOpacities];
-                    newOpacities[index] =.5;
-                    return newOpacities;
-                });
+                const cardRef = cardRefs[index];
+
+                cardRef.current.callDuration(500);
+                // setTopValues((prevTopValues) => {
+                //     const newTopValues = [...prevTopValues];
+                //     newTopValues[index] = window.innerHeight - 100;
+                //     return newTopValues;
+                // });
+
+                cardRef.current.callTopPosition(window.innerHeight - 100);
+                // setOpacities((prevOpacities) => {
+                //     const newOpacities = [...prevOpacities];
+                //     newOpacities[index] =.5;
+                //     return newOpacities;
+                // });
+                cardRef.current.callOpacity(.5);
                 setTimeout(() => {
-                    setDuration((prevDuration) => {
-                        const newDuration = [...prevDuration];
-                        newDuration[index] = 0;
-                        return newDuration;
-                    });
-                   
-                    setZIndexs((prevZIndexs) => {
-                        const newZIndexs = [...prevZIndexs];
-                        newZIndexs[index] = 40;
-                        return newZIndexs;
-                    });
+                //     setDuration((prevDuration) => {
+                //         const newDuration = [...prevDuration];
+                //         newDuration[index] = 0;
+                //         return newDuration;
+                //     });
+                
+                cardRef.current.callDuration(0);
+                //     setZIndexs((prevZIndexs) => {
+                //         const newZIndexs = [...prevZIndexs];
+                //         newZIndexs[index] = 40;
+                //         return newZIndexs;
+                //     });
+                cardRef.current.callZindex(40);
                 }, 500); // Delay to match the animation duration
                 setTimeout(() => { 
-                    setDuration((prevDuration) => {
-                        const newDuration = [...prevDuration];
-                        newDuration[index] = 500;
-                        return newDuration;
-                    });
-                    setOpacities((prevOpacities) => {
-                        const newOpacities = [...prevOpacities];
-                        newOpacities[index] = 1;
-                        return newOpacities;
-                    });
-                    setWidths((prevWidths) => {
-                        const newWidths = [...prevWidths];
-                        console.log("final width", startWidths.current[3]);
-                        console.log("widths",startWidths.current);
-                        newWidths[index] = startWidths.current[0];
-                        return newWidths;
-                    });
-                    setTopValues((prevTopValues) => {
-                        const newTopValues = [...prevTopValues];
-                        newTopValues[index] = startTops[0];
-                        return newTopValues;
-                    });
+                    // setDuration((prevDuration) => {
+                    //     const newDuration = [...prevDuration];
+                    //     newDuration[index] = 500;
+                    //     return newDuration;
+                    // });
+                    cardRef.current.callDuration(500);
+                    // setOpacities((prevOpacities) => {
+                    //     const newOpacities = [...prevOpacities];
+                    //     newOpacities[index] = 1;
+                    //     return newOpacities;
+                    // });
+                    cardRef.current.callOpacity(1);
+                    // setWidths((prevWidths) => {
+                    //     const newWidths = [...prevWidths];
+                    //     console.log("final width", startWidths.current[3]);
+                    //     console.log("widths",startWidths.current);
+                    //     newWidths[index] = startWidths.current[0];
+                    //     return newWidths;
+                    // });
+                    cardRef.current.callWidth(startWidths.current[0]);
+                    // setTopValues((prevTopValues) => {
+                    //     const newTopValues = [...prevTopValues];
+                    //     newTopValues[index] = startTops[0];
+                    //     return newTopValues;
+                    // });
+                    cardRef.current.callTopPosition(startTops[0]);
                 }, 550); // Delay to match the animation duration
 
         }
@@ -245,138 +282,160 @@ const CardBox = forwardRef((props,ref) => {
           }
        
         const scrollUp = async () => {
-           
+            if(isAnimatingRef.current) {
+                return; 
+            }
+            isAnimatingRef.current = true;
 
-            let j = previousOpened;
+            
             for(let i = 0; i < 4; i++) {
-                console.log("current drawer", currentDrawer);
+               
                 console.log("next drawer", nextDrawer);
-                if(j === previousOpened) {
-                    console.log("open drawer", j);
-                    reopenCard(j);
+                if(i === previousCard.current) {
+                    console.log("open drawer", i);
+                    reopenCard(i);
                     
-                    setNextDrawer((prevNextDrawer) => prevNextDrawer - 1);
-                    if(nextDrawer <= 0) {
-                        setNextDrawer(3);
-                    }
-                await sleep(100);
+                    
+                // await sleep(100);
                
                 }else{
-                    console.log("slide drawer", j);
+                    console.log("slide drawer", i);
                     //openCard(i);
-                    setColoring((prevColor) => {
-                        const newColor = [...prevColor]; 
-                        newColor[j] = 'bg-[#1E1E1E]';
-                        return newColor;
-                    });
-                    lowerTop(j);
-                    shrinkWidth(j);
-                    lowerZIndex(j); 
+                    // setColoring((prevColor) => {
+                    //     const newColor = [...prevColor]; 
+                    //     newColor[j] = 'bg-[#1E1E1E]';
+                    //     return newColor;
+                    // });
+                    cardRefs[i].current.callColorChange('#1E1E1E');
+                    // lowerTop(j);
+                    cardRefs[i].current.lowerTop(topStep);
+                    // shrinkWidth(j);
+                    cardRefs[i].current.shrinkWidth(widthStep);
+                    // lowerZIndex(j); 
+                    cardRefs[i].current.lowerZindex(10);
                 }
-                j--;
-                if(j < 0) {
-                    j = 3;
-                }
+                
             }
+            nextDrawer.current = currentCard.current;
+            currentCard.current = previousCard.current;
+            previousCard.current = previousCard.current -1;
+            if(previousCard.current < 0) {
+                previousCard.current = 3;
+            }
+            setTimeout(() => {
+                isAnimatingRef.current = false;
+            }, 600); // Delay to match the animation duration
         }
         const scrollDown =  async () => {
-            let j = currentDrawer;
-            incRank();
+            if(isAnimatingRef.current) {
+                return; 
+            }
+            isAnimatingRef.current = true;
+            
+            // incRank();
             for(let i = 0; i < 4; i++) {
                 
 
-                console.log("current drawer", currentDrawer);
-                console.log("next drawer", nextDrawer)
+               
                 
-                if(j === currentDrawer) {
-                    console.log("close drawer", j);
-                    closeDrawer(j);
+                if(i === currentCard.current) {
+                    console.log("close drawer",i);
+                    console.log("next: ", nextDrawer.current);
+                    closeDrawer(i);
 
                     await sleep(100);
                 
                 
-                }else if( j === nextDrawer) {
-                    console.log("open drawer", j);
-                    openCard(j);
+                }else if( i === nextDrawer.current) {
+                    console.log("open drawer", i);
+                     openCard(i);
                     // setNewZIndex(i);
-                    expandWidth(j);
-                    setNextDrawer((prevNextDrawer) => prevNextDrawer + 1);
-                    if(nextDrawer >= 3) {
-                        setNextDrawer(0);
-                    }
+                    cardRefs[i].current.expandWidth(widthStep);
+                    // setNextDrawer((prevNextDrawer) => prevNextDrawer + 1);
+                    
                 }else{
-                    console.log("slide drawer", j);
+                    console.log("slide drawer", i);
                     //openCard(i);
-                    raiseTop(j);
-                    expandWidth(j);
-                    raiseZIndex(j);
-                    changeColor(j);
+                    cardRefs[i].current.raiseTop(topStep);
+                    cardRefs[i].current.expandWidth(widthStep);
+                    cardRefs[i].current.raiseZindex(10);
+                    //changeColor(j);
                     
                     
                 }
-                console.log("rank", rank);
-                j++;
-                if(j > 3) {
-                    j = 0;
-                }
+
+                
+                
+                
+               
             }
+            previousCard.current = currentCard.current;
+            currentCard.current = nextDrawer.current;
+            nextDrawer.current = nextDrawer.current + 1;
+                    if(nextDrawer.current > 3) {
+                        nextDrawer.current = 0;
+                    }
             
+            setTimeout(() => {
+                isAnimatingRef.current = false;
+            }, 600); // Delay to match the animation duration
             
         };
 
-        const incRank = () => {
-            setRank((prevRank) => { 
-                const newRank = [...prevRank];
-                for(let i = 0; i < newRank.length; i++) {
-                    if(newRank[i] === 3) {
-                        newRank[i] = 0;
-                    }else{
-                        newRank[i] = newRank[i] + 1;
-                    }
-                }
-                  return newRank;
+        // const incRank = () => {
+        //     setRank((prevRank) => { 
+        //         const newRank = [...prevRank];
+        //         for(let i = 0; i < newRank.length; i++) {
+        //             if(newRank[i] === 3) {
+        //                 newRank[i] = 0;
+        //             }else{
+        //                 newRank[i] = newRank[i] + 1;
+        //             }
+        //         }
+        //           return newRank;
          
-            });
-        }
+        //     });
+        // }
 
-        const decRank = () => {
-            setRank((prevRank) => { 
-                const newRank = [...prevRank];
-                for(let i = 0; i < newRank.length; i++) {
-                    if(newRank[i] === 0) {
-                        newRank[i] = 3;
-                    }else{
-                        newRank[i] = newRank[i] - 1;
-                    }
-                }
-                return newRank;
+        // const decRank = () => {
+        //     setRank((prevRank) => { 
+        //         const newRank = [...prevRank];
+        //         for(let i = 0; i < newRank.length; i++) {
+        //             if(newRank[i] === 0) {
+        //                 newRank[i] = 3;
+        //             }else{
+        //                 newRank[i] = newRank[i] - 1;
+        //             }
+        //         }
+        //         return newRank;
                         
-            });
+        //     });
                 
-        }
+        // }
 
-        const changeColor = (index) => {
-            setColoring((prevColor) => {
-                const newColor = [...prevColor];
-                newColor[index] = startColors[rank[index]];
-                return newColor;
-            });
-        }
+        // const changeColor = (index) => {
+        //     setColoring((prevColor) => {
+        //         const newColor = [...prevColor];
+        //         newColor[index] = startColors[rank[index]];
+        //         return newColor;
+        //     });
+        // }
 
         const reopenCard = (index) => {
 
             console.log("reopen drawer", index);
-            setColoring((prevColor) => {
-                const newColor = [...prevColor];
-                newColor[index] = 'bg-[#2C2C2E]';
-                return newColor;
-            });
-            setCurrentDrawer(index);
-            let j = index -1;
-            if(j < 0) {
-                j = 3;
-            }
-            setPreviousOpened(j);
+            // setColoring((prevColor) => {
+            //     const newColor = [...prevColor];
+            //     newColor[index] = 'bg-[#2C2C2E]';
+            //     return newColor;
+            // });
+            cardRefs[index].current.callColorChange(startColors[0]);
+            
+            // let j = index -1;
+            // if(j < 0) {
+            //     j = 3;
+            // }
+            // setPreviousOpened(j);
            reverseAnimation(index);
         }
         const closeDrawer = (index) => {
@@ -388,100 +447,92 @@ const CardBox = forwardRef((props,ref) => {
             // });
             console.log("animating", index);
             
-            setPreviousOpened(index);
+            // setPreviousOpened(index);
             handleAnimation(index);
         }
 
-        const shrinkWidth = (index) => {
-            setWidths((prevWidths) => {
-                const newWidths = [...prevWidths];
-                newWidths[index] = newWidths[index] - widthStep;
-                return newWidths;
-            });
+        // const shrinkWidth = (index) => {
+        //     setWidths((prevWidths) => {
+        //         const newWidths = [...prevWidths];
+        //         newWidths[index] = newWidths[index] - widthStep;
+        //         return newWidths;
+        //     });
             
-        }
+        // }
 
-        const expandWidth = (index) => {
-            setWidths((prevWidths) => {
-                const newWidths = [...prevWidths];
-                newWidths[index] = newWidths[index] + widthStep;
-                return newWidths;
-            });
-        }
+        // const expandWidth = (index) => {
+        //     setWidths((prevWidths) => {
+        //         const newWidths = [...prevWidths];
+        //         newWidths[index] = newWidths[index] + widthStep;
+        //         return newWidths;
+        //     });
+        // }
 
     
         const openCard = (index) => {
-            setOpenDrawers((prevOpenDrawers) => {
-                const newOpenDrawers = [...prevOpenDrawers];
-                const updatedOpenDrawers = newOpenDrawers.map((_, i) => i === index ? true : false);
-                
-                return updatedOpenDrawers;
-               
-            });
-            setColoring((prevColor) => {
-                const newColor = [...prevColor];
-                newColor[index] = startColors[0];
-                return newColor;
-            });
             
-            setTopValues((prevTopValues) => {
-                const newTopValues = [...prevTopValues];
-                newTopValues[index] = maxTops[index];
-                return newTopValues;
-            });
-            setHasOpened((prevHasOpened) => {
-                const newHasOpened = [...prevHasOpened];
-                newHasOpened[index] = true;
-                return newHasOpened;
-            });
-            setZIndexs((prevZIndexs) => {
-                const newZIndexs = [...prevZIndexs];
-                newZIndexs[index] = 40;
-                return newZIndexs;
-            });
-            setCurrentDrawer(index);
-            
-        }
-        const raiseTop = (index) => {
-            setTopValues((prevTopValues) => {
-                const newTopValues = [...prevTopValues];
-                newTopValues[index] = newTopValues[index] - topStep;
-                return newTopValues;
-            });
-        }
-        const lowerTop = (index) => {
-            setTopValues((prevTopValues) => {
-                const newTopValues = [...prevTopValues];
-                newTopValues[index] = newTopValues[index] + topStep;
-                return newTopValues;
-            });
-        }
+            // setColoring((prevColor) => {
+            //     const newColor = [...prevColor];
+            //     newColor[index] = startColors[0];
+            //     return newColor;
+            // });
+            cardRefs[index].current.callColorChange(startColors[0]);
 
-        const raiseZIndex = (index) => {
-            setZIndexs((prevZIndexs) => {
-                // console.log("Previous zIndexs:", prevZIndexs);
-                const newZIndexs = [...prevZIndexs];
-                newZIndexs[index] = newZIndexs[index] + 10;
-                return newZIndexs;
-            });
-        }
-        const lowerZIndex = (index) => {
-            setZIndexs((prevZIndexs) => {
-                // console.log("Previous zIndexs:", prevZIndexs);
-                const newZIndexs = [...prevZIndexs];
-                newZIndexs[index] = newZIndexs[index] - 10;
-                return newZIndexs;
-            });
+            
+            // setTopValues((prevTopValues) => {
+            //     const newTopValues = [...prevTopValues];
+            //     newTopValues[index] = maxTops[index];
+            //     return newTopValues;
+            // });
+            cardRefs[index].current.callTopPosition(maxTops[index]);
+            // setHasOpened((prevHasOpened) => {
+            //     const newHasOpened = [...prevHasOpened];
+            //     newHasOpened[index] = true;
+            //     return newHasOpened;
+            // });
+            // setZIndexs((prevZIndexs) => {
+            //     const newZIndexs = [...prevZIndexs];
+            //     newZIndexs[index] = 40;
+            //     return newZIndexs;
+            // });
+            cardRefs[index].current.callZindex(40);
+           //currentCard.current = index;
+            
         }
         
-        const mouseStateByIndex = (index) => {
-            if(index === 1){
-                setDisableMouseEvents1(!disableMouseEvents1);
+        // const lowerTop = (index) => {
+        //     setTopValues((prevTopValues) => {
+        //         const newTopValues = [...prevTopValues];
+        //         newTopValues[index] = newTopValues[index] + topStep;
+        //         return newTopValues;
+        //     });
+        // }
 
-            }else if(index === 2){
-                setDisableMouseEvents2(!disableMouseEvents2);
-            }
-        }
+        // const raiseZIndex = (index) => {
+        //     setZIndexs((prevZIndexs) => {
+        //         // console.log("Previous zIndexs:", prevZIndexs);
+        //         const newZIndexs = [...prevZIndexs];
+        //         newZIndexs[index] = newZIndexs[index] + 10;
+        //         return newZIndexs;
+        //     });
+        // }
+        // const lowerZIndex = (index) => {
+        //     setZIndexs((prevZIndexs) => {
+        //         // console.log("Previous zIndexs:", prevZIndexs);
+        //         const newZIndexs = [...prevZIndexs];
+        //         newZIndexs[index] = newZIndexs[index] - 10;
+        //         return newZIndexs;
+        //     });
+        // }
+        
+        // const mouseStateByIndex = (index) => {
+        //     if(index === 1){
+        //         setDisableMouseEvents1(!disableMouseEvents1);
+
+        //     }else if(index === 2){
+        //         setDisableMouseEvents2(!disableMouseEvents2);
+        //     }
+        // }
 
 
         
@@ -510,7 +561,7 @@ const CardBox = forwardRef((props,ref) => {
   return (
     
       <div className="relative grid grid-col max-w-screen place-items-center box-border h-screen w-screen  bg-[#121212]">
-        <SlideCards duration = {`${duration[0]}`}  bg={`${color[0]}`} zIndex={ `${zIndexs[0]}`}  height = 'h-7/10'  width = { `${widths[0]}px`} top = { `${topValues[0]}px` } pos='absolute' title="About Me" disableMouseEvents = {true} cardOpen = {openDrawers[0]} closing = {closing[0]} maxTop = {maxTops[0]} opacity = {opacities[0]} >
+        <SlideCards ref={cardRefs[0]}  pos='absolute' title="About Me" >
         
             <div className="grid grid-cols-2 gap-0 w-full h-full">
             
@@ -527,7 +578,7 @@ const CardBox = forwardRef((props,ref) => {
             </div>
         </SlideCards>
 
-        <SlideCards  duration = {`${duration[1]}`} bg={`${color[1]}`} zIndex={ `${zIndexs[1]}`}  height='h-7/10' width={ `${widths[1]}px`} top ={ `${topValues[1]}px` } pos="absolute" title="Projects" disableMouseEvents = {true} maxTop = {maxTops[1]} cardOpen= {openDrawers[1]} closing={closing[1]} opacity= {opacities[1]}>
+        <SlideCards ref={cardRefs[1]} pos="absolute" title="Projects" >
             
             <h3>Links to my personal projects</h3>
             <div className="flex flex-nowrap basis-lg gap-4 mt-4">
@@ -558,7 +609,7 @@ front-end technologies (JavaScript, HTML, CSS)"
             />
             </div>
         </SlideCards>
-        <SlideCards  duration = {`${duration[2]}`} bg={`${color[2]}`} zIndex={ `${zIndexs[2]}`} title="Work And Education" width = { `${widths[2]}px`} top ={  `${topValues[2]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[2]} cardOpen = {openDrawers[2]} closing = {closing[2]} opacity= {opacities[2]}>
+        <SlideCards  ref={cardRefs[2]}  title="Work and Education"  pos="absolute">
         <h3>My work experience and education</h3>
         <h2 className="text-2xl font-bold mb-1 mt-4 ">Education</h2>
                <ol className="list-disc list-inside">
@@ -602,7 +653,7 @@ front-end technologies (JavaScript, HTML, CSS)"
                 </ol>
        
         </SlideCards>
-        <SlideCards  duration = {`${duration[3]}`} bg={`${color[3]}`} zIndex={ `${zIndexs[3]}`} title="Hobbies and More" width = { `${widths[3]}px`} top ={  `${topValues[3]}px` } pos="absolute" height="h-7/10" disableMouseEvents = {true} maxTop = {maxTops[3]} cardOpen = {openDrawers[3]} closing={closing[3]} opacity= {opacities[3]}>   
+        <SlideCards ref={cardRefs[3]}  title="Hobbies and More"  pos="absolute" >   
             
             <h3>More about my interest in Games, Art, and more!</h3>
         </SlideCards>

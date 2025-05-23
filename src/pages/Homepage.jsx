@@ -20,11 +20,17 @@ const Homepage = () => {
       cardboxRef.current.callScrollUp();
     }
   };
+  const getCurrentCard = () => {
+    if(cardboxRef.current) {
+      return cardboxRef.current.currentCardRef;
+    }
+    return null;
+  }
 
     
   return (
     <>
-    <Navbar onCallNextBox = {handleCardBoxCall} onCallPrevBox={handleCardBoxCallPrev}/>
+    <Navbar onCallNextBox = {handleCardBoxCall} onCallPrevBox={handleCardBoxCallPrev} currentCard = {getCurrentCard}/>
     <CardBox ref={cardboxRef}/>
     </>
   );

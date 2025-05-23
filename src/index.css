@@ -28,7 +28,7 @@ body::-webkit-scrollbar {
     }
     
   }
-  --animate-fillText: fillText 40s linear forwards;
+  --animate-fillText: fillText 9.5s linear forwards;
 
   @keyframes fillText {
     0%{

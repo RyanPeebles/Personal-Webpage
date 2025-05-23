@@ -6,14 +6,23 @@ import { FaArrowLeft, FaArrowRight, FaPlay, FaPause } from "react-icons/fa6";
 
 
 import NavButtons from "./NavButtons";
-const Navbar = ({onCallNextBox, onCallPrevBox}) => {
+
+const Navbar = ({onCallNextBox, onCallPrevBox, currentCard}) => {
     
 
     const intervalRef = useRef(null);
     const timerRef = useRef(null);
     
+    const currentCardRef = useRef(currentCard);
+    const navBtnRef = [useRef(), useRef(), useRef(), useRef()];
     
-    
+    // useEffect(() => {
+    //     navBtnRef.current[0] = document.querySelector('.animate--animate-fillText');
+
+    // }, []);
+    const handleLoadAnimation = () => {
+        navBtnRef[0].current.toggleLoadingAnimation();
+    };
       
    
     const pause = () => {
@@ -56,6 +65,8 @@ const Navbar = ({onCallNextBox, onCallPrevBox}) => {
     useEffect(() => {
        
         mountInterval(); // Start the interval on mount
+        handleLoadAnimation();
+
 
         
         return () => clearInterval(intervalRef.current); // Cleanup on unmount
@@ -63,6 +74,7 @@ const Navbar = ({onCallNextBox, onCallPrevBox}) => {
     , []);
 
     const tick = () => { 
+        handleLoadAnimation();
         onCallNextBox();
         console.log("Interval ticked:", intervalRef.current);
            
@@ -79,8 +91,7 @@ const Navbar = ({onCallNextBox, onCallPrevBox}) => {
                         <div className='md:ml-auto'>
                             
                             
-                        <div className='flex space-x-2 text-xl  bg-white font-bold text-transparent bg-gradient-to-r from-[#FF4F81] to-[#FF4F81]
-                             bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-(--animate-fillText) '>
+                        <div className='flex space-x-2 text-xl font-bold bg-white text-transparent  bg-clip-text'>
                                
                                 
                                 
@@ -89,11 +100,11 @@ const Navbar = ({onCallNextBox, onCallPrevBox}) => {
                                 <FaPause id="pauseBtn" className="text-white text-2xl hover:text-[#00FFD1]" onClick={pause}/>
                                 <FaArrowLeft className="text-white text-2xl hover:text-[#00FFD1]" onClick={onCallPrevBox}/>
                                 <FaArrowRight className="text-white text-2xl hover:text-[#00FFD1]" onClick={onCallNextBox}/>
-                           <NavButtons textValue={"About Me"}></NavButtons>
+                           <NavButtons ref={navBtnRef[0]} textValue={"About Me"}></NavButtons>
                            
-                           <NavButtons textValue={"Projects"}></NavButtons>
-                           <NavButtons textValue={"Experience"}></NavButtons>
-                           <NavButtons textValue={"More"}></NavButtons>
+                           <NavButtons ref={navBtnRef[1]} textValue={"Projects"}></NavButtons>
+                           <NavButtons ref={navBtnRef[2]} textValue={"Experience"}></NavButtons>
+                           <NavButtons ref={navBtnRef[3]} textValue={"More"}></NavButtons>
                            
 
                         </div>
