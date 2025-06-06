@@ -45,12 +45,12 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
     const handleUnloadAnimation = (prevCard) => {
         if(prevCard) {
         // console.log("animation ended for card: " ,currentCard);
-        navBtnRef[prevCard].current.animationSwitch("reset");
+        //navBtnRef[prevCard].current.animationSwitch("reset");
         navBtnRef[prevCard].current.animationSwitch("unload");
         
         }
         else {
-            navBtnRef[0].current.animationSwitch("reset");
+           // navBtnRef[0].current.animationSwitch("reset");
             navBtnRef[0].current.animationSwitch("unload");
         }
     }

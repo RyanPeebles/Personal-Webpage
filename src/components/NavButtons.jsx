@@ -53,7 +53,7 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
     return (
         <> 
         <button
-            key = {reset}
+            //key = {reset}
             className={currentAnimation({isCurrent: isCurrent}) + defaultAnimation({isNext: isNext, isCurrent: isCurrent}) + nextAnimation({isNext: isNext}) + ' hover:text-[#00FFD1]'}
             onClick={buttonFunction}
             // onMouseEnter={() => {
