@@ -1,82 +1,150 @@
 @import "tailwindcss";
 
-body{
-  overflow: hidden;
-}
-body::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Edge */
-  }
+/* Base styles */
+:root[data-theme="dark"] {
+  /* Base colors */
+  --color-bg: #121212;
+  --color-bg-light: #1E1E1E;
+  --color-bg-lighter: #2C2C2E;
+  --color-bg-lightest: #3A3A3C;
+  
+  --color-accent-teal: #00FFD1;
+  --color-accent-teal-dark: #00CCA7;
+  
+  --color-accent-pink: #FF4F81;
+  --color-accent-pink-dark: #E63E6D;
+  
+  --color-text: #EDEDED;
+  --color-text-muted: #A0A0A0;
+  --color-text-dark: #2C2C2E;
 
-  @theme{
-
-  --animate-slideOut: slide-out 1s ease-in-out forwards;
-
-  @keyframes slide-out {
-    0%{
-      /* opacity:1; */
-      transform: translateY(0) scaleX(1);
-      
-      /* z-index: 40; */
-    }
-   
-    100% {
-      transform: translateY(40px) scaleX(.95);
-      /* opacity: 0; */
-      /* z-index: 0; */
-    
-      
-    }
-    
-  }
-  --animate-fillText: fillText 9.5s linear forwards;
-
-  @keyframes fillText {
-    0%{
-      background-size: 0% 100%;
-    }
-    100% {
-      background-size: 100% 100%;
-    }
-    
-  }
-
-  --animate-fadeIn : fade-in 1s ease-in-out forwards;
-
-  @keyframes fade-in {
-    0%{
-      opacity:0;
-      transform: translateY(60px);
-      transform: scaleX(.95);
-    }
-   
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-      transform: scaleX(1);
-      
-    }
-    
-  }
+  --color-btn-primary: #00FFD1;
+  --color-btn-secondary: #FF4F81;
 
   
 }
-.icons {
-  width : 24px;
-  height : 24px;
-  background-image: url('src/assets/arrow_pause_play-Sheet.png');
-  background-repeat: no-repeat;
-  display: inline-block;
-   
+
+/* Light theme */
+:root[data-theme="light"] {
+    --color-bg: #F8F9FA;
+    --color-bg-light: #FFFFFF;
+    --color-bg-lighter: #F1F3F5;
+    --color-bg-lightest: #E9ECEF;
+    --color-text: #212529;
+    --color-text-muted: #6C757D;
+    --color-text-dark: #343A40;
+    --color-accent-teal: #00BFA5;  /* Slightly darker for better contrast */
+    --color-accent-teal-dark: #00897B;
+    --color-accent-pink: #E91E63;  /* Slightly darker for better contrast */
+    --color-accent-pink-dark: #C2185B;
+    --color-btn-primary: #00897B;
+    --color-btn-secondary: #C2185B;
+  }
+:root{
+    /* Theme Variables - Map to Tailwind's color system */
+  --color-primary: var(--color-accent-teal);
+  --color-secondary: var(--color-accent-pink);
+  --color-primary-dark: var(--color-accent-teal-dark);
+  --color-secondary-dark: var(--color-accent-pink-dark);
+  --color-background: var(--color-bg);
+  --color-surface1: var(--color-bg-light);
+  --color-surface2: var(--color-bg-lighter);
+  --color-surface3: var(--color-bg-lightest);
+  
+  --color-on-primary: var(--color-text-dark);
+  --color-on-secondary: var(--color-text-dark);
+  --color-on-background: var(--color-text);
+  --color-on-surface: var(--color-text-muted);
+
+  --color-btn-primary: var(--color-btn-primary);
+  --color-btn-secondary: var(--color-btn-secondary);
+  }
+
+  html, body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+body {
+  overflow: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
-.icons-0{
-  background-position: 0px 0px;
+
+body::-webkit-scrollbar {
+  display: none;
 }
-.icons-1{
-  background-position: -24px 0px;
+
+@theme {
+  --animate-fillText: fillText 9.5s linear forwards;
+  --animate-unfillText: unfillText 9.5s linear forwards;
+
+  @keyframes fillText {
+    0% { background-size: 0% 100%; }
+    100% { background-size: 100% 100%; }
+  }
+  @keyframes unfillText {
+    0% { background-size: 100% 100%; }
+    100% { background-size: 0% 100%; }
+  }
 }
-.icons-2{
-  background-position: -48px 0px;
-}
-.icons-3{
-  background-position: -72px 0px;
+
+/* Utility classes for colors */
+@layer utilities {
+  /* Background colors */
+  .bg-primary { background-color: var(--color-primary); }
+  .bg-secondary { background-color: var(--color-secondary); }
+  .bg-surface1 { background-color: var(--color-surface1); }
+  .bg-surface2 { background-color: var(--color-surface2); }
+  .bg-surface3 { background-color: var(--color-surface3); }
+  .bg-background { background-color: var(--color-background); }
+  
+  /* Text colors */
+  .text-on-primary { color: var(--color-on-primary); }
+  .text-on-secondary { color: var(--color-on-secondary); }
+  .text-on-surface { color: var(--color-on-surface); }
+  .text-on-background { color: var(--color-on-background); }
+  
+  /* Border colors */
+  .border-primary { border-color: var(--color-primary); }
+  .border-secondary { border-color: var(--color-secondary); }
+  
+  /* button colors */
+  .button-primary { color: var(--color-btn-primary); }
+  .button-secondary { color: var(--color-btn-secondary); }
+  
+  /* Hover states */
+  .hover\:bg-primary:hover { background-color: var(--color-primary); }
+  .hover\:bg-secondary:hover { background-color: var(--color-secondary); }
+  .hover\:bg-primary-dark:hover { background-color: var(--color-accent-teal-dark); }
+  .hover\:bg-secondary-dark:hover { background-color: var(--color-accent-pink-dark); }
+  .hover\:text-on-primary:hover { color: var(--color-on-primary); }
+  .hover\:text-on-secondary:hover { color: var(--color-on-secondary); }
+  .hover\:border-primary:hover { border-color: var(--color-primary); }
+  .hover\:border-secondary:hover { border-color: var(--color-secondary); }
+  .hover\:text-primary:hover { color: var(--color-primary); }
+  .hover\:text-secondary:hover { color: var(--color-secondary); }
+  .hover\:text-primary-dark:hover { color: var(--color-primary-dark); }
+  .hover\:text-secondary-dark:hover { color: var(--color-secondary-dark); }
+
+  .hover\:button-primary:hover { color: var(--color-btn-primary); }
+  .hover\:button-secondary:hover { color: var(--color-btn-secondary); }
+
+  .animate-fillText {
+    animation: fillText 9s linear forwards;
+  }
+
+  .animate-unfillText {
+    animation: unfillText 9s linear forwards;
+  }
+  .delay-250{
+    animation-delay: 250ms;
+  }
+  .delay-500{
+    animation-delay: 500ms;
+  }
+  .delay-750{
+    animation-delay: 750ms;
+  }
+  .delay-1000{
+    animation-delay: 1000ms;
+  }
 }

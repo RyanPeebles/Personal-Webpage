@@ -1,12 +1,14 @@
 import CardBox from "../components/CardBox";
 import Navbar from "../components/Navbar";
-import{ useRef } from "react";
+import{ useRef, useState } from "react";
 
 
 
 const Homepage = () => { 
 
+  const [currentCard, setCurrentCard] = useState(null);
   const cardboxRef = useRef(null);
+  const navBarRef = useRef(null);
 
   const handleCardBoxCall = () => {
 
@@ -20,18 +22,20 @@ const Homepage = () => {
       cardboxRef.current.callScrollUp();
     }
   };
-  const getCurrentCard = () => {
-    if(cardboxRef.current) {
-      return cardboxRef.current.currentCardRef;
-    }
-    return null;
+  const passCurrentCard = (card) => {
+    console.log("passing current card: ", card);
+    navBarRef.current.callLoadAnimation(card);
+  }
+  const passPrevCard = (card) => {
+    console.log("passing previous card: ", card);
+    navBarRef.current.callunloadAnimation(card);
   }
 
     
   return (
     <>
-    <Navbar onCallNextBox = {handleCardBoxCall} onCallPrevBox={handleCardBoxCallPrev} currentCard = {getCurrentCard}/>
-    <CardBox ref={cardboxRef}/>
+    <Navbar ref ={navBarRef} onCallNextBox = {handleCardBoxCall} onCallPrevBox={handleCardBoxCallPrev}/>
+    <CardBox ref={cardboxRef} passCurrentCard= {passCurrentCard} passPrevCard = {passPrevCard}/>
     </>
   );
 }

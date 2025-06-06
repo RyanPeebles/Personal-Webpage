@@ -1,28 +1,59 @@
 
-import { useRef, useEffect, useState} from "react";
+import { useRef, useLayoutEffect, useState, forwardRef, useImperativeHandle} from "react";
 import { FaArrowLeft, FaArrowRight, FaPlay, FaPause } from "react-icons/fa6";
 
 
 
 
 import NavButtons from "./NavButtons";
+import ThemeToggle from "./themeToggle";
 
-const Navbar = ({onCallNextBox, onCallPrevBox, currentCard}) => {
+const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
     
 
     const intervalRef = useRef(null);
     const timerRef = useRef(null);
     
-    const currentCardRef = useRef(currentCard);
+    
     const navBtnRef = [useRef(), useRef(), useRef(), useRef()];
+
+
     
     // useEffect(() => {
     //     navBtnRef.current[0] = document.querySelector('.animate--animate-fillText');
 
     // }, []);
-    const handleLoadAnimation = () => {
-        navBtnRef[0].current.toggleLoadingAnimation();
+
+    useImperativeHandle(ref, () => ({
+        callLoadAnimation: (card) => {
+            handleLoadAnimation(card);
+        },
+        callunloadAnimation: (card) => {
+            
+            handleUnloadAnimation(card);
+        }
+    }));
+    const handleLoadAnimation = (currentCard) => {
+        if(currentCard) {
+        console.log("animation started for card: " ,currentCard);
+        navBtnRef[currentCard].current.setIsCurrent(true);
+        }else {
+            //navBtnRef[0].current.setIsCurrent(true);
+        }
     };
+
+    const handleUnloadAnimation = (prevCard) => {
+        if(prevCard) {
+        // console.log("animation ended for card: " ,currentCard);
+        navBtnRef[prevCard].current.animationSwitch("reset");
+        navBtnRef[prevCard].current.animationSwitch("unload");
+        
+        }
+        else {
+            navBtnRef[0].current.animationSwitch("reset");
+            navBtnRef[0].current.animationSwitch("unload");
+        }
+    }
       
    
     const pause = () => {
@@ -54,34 +85,45 @@ const Navbar = ({onCallNextBox, onCallPrevBox, currentCard}) => {
         intervalRef.current = setInterval(tick, 10000); // Set the interval to 10 seconds
         timerRef.current = Date.now(); // Store the current time
 
-        console.log("Interval mounted:", intervalRef.current);
+      
     }
     const unmountInterval = () => {
         clearInterval(intervalRef.current); // Clear the interval
         intervalRef.current = null; // Reset the ref to null
         timerRef.current = 10000-( (Date.now() - timerRef.current)% 10000); // Calculate the time delta
     }
+   
 
-    useEffect(() => {
-       
+    useLayoutEffect(() => {
+        
         mountInterval(); // Start the interval on mount
-        handleLoadAnimation();
+        //handleLoadAnimation();
 
-
+        initBtnStates();
         
         return () => clearInterval(intervalRef.current); // Cleanup on unmount
     }
     , []);
+    const initBtnStates = () => {
+        navBtnRef[0].current.setIsCurrent(true);
+        navBtnRef[1].current.setIsCurrent(false);
+        navBtnRef[2].current.setIsCurrent(false);
+        navBtnRef[3].current.setIsCurrent(false);
+
+        navBtnRef[1].current.animationSwitch("load");
+        ;
+    }
 
     const tick = () => { 
-        handleLoadAnimation();
+        //handleLoadAnimation();
         onCallNextBox();
-        console.log("Interval ticked:", intervalRef.current);
+        
            
     }
+    
     return (
 
-        <nav className=" static bg-[#121212]   w-full text-red h-1/10 z-50">
+        <nav className=" static bg-background text-on-background  w-full h-1/10 z-50">
             <div className=" mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                 <div className="relative flex  h-20 items-center justify-between ">
                         <div className='flex flex-1 items-center
@@ -91,15 +133,15 @@ const Navbar = ({onCallNextBox, onCallPrevBox, currentCard}) => {
                         <div className='md:ml-auto'>
                             
                             
-                        <div className='flex space-x-2 text-xl font-bold bg-white text-transparent  bg-clip-text'>
+                        <div className='flex space-x-2 text-xl font-bold'>
                                
                                 
                                 
-                                
-                                <FaPlay id="playBtn" className="text-white text-2xl hover:text-[#00FFD1] hidden" onClick={play}/>
-                                <FaPause id="pauseBtn" className="text-white text-2xl hover:text-[#00FFD1]" onClick={pause}/>
-                                <FaArrowLeft className="text-white text-2xl hover:text-[#00FFD1]" onClick={onCallPrevBox}/>
-                                <FaArrowRight className="text-white text-2xl hover:text-[#00FFD1]" onClick={onCallNextBox}/>
+                                <ThemeToggle/>
+                                <FaPlay id="playBtn" className="text-white text-2xl hover:button-primary hidden" onClick={play}/>
+                                <FaPause id="pauseBtn" className="text-white text-2xl hover:button-primary" onClick={pause}/>
+                                <FaArrowLeft className="text-on-background text-2xl hover:button-primary" onClick={onCallPrevBox}/>
+                                <FaArrowRight className="text-on-background text-2xl hover:button-primary" onClick={onCallNextBox}/>
                            <NavButtons ref={navBtnRef[0]} textValue={"About Me"}></NavButtons>
                            
                            <NavButtons ref={navBtnRef[1]} textValue={"Projects"}></NavButtons>
@@ -115,5 +157,5 @@ const Navbar = ({onCallNextBox, onCallPrevBox, currentCard}) => {
         </nav>
      );
      
-}
+});
 export default Navbar;
