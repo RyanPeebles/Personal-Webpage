@@ -2,7 +2,7 @@ import { useLayoutEffect, useEffect, useState, useRef, forwardRef, useImperative
 import SlideCards from "./SlideCards";
 import FlashCard from "./FlashCard";
 
-const CardBox = forwardRef(({props, passCurrentCard, passPrevCard},ref) => {
+const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard},ref) => {
 
  
  
@@ -51,8 +51,9 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard},ref) => {
             passCurrentCard(currentCard.current);
 
             nextDrawer.current = 1;
+            passNextCard(nextDrawer.current);
             previousCard.current = 3;
-           // passPrevCard(previousCard.current);
+            passPrevCard(previousCard.current);
 
             
 
@@ -219,6 +220,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard},ref) => {
             }
             passPrevCard(previousCard.current);
             passCurrentCard(currentCard.current);
+            passNextCard(nextDrawer.current);
 
 
             setTimeout(() => {
@@ -277,6 +279,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard},ref) => {
                     }
             passCurrentCard(currentCard.current);
             passPrevCard(previousCard.current)
+            passNextCard(nextDrawer.current)
             
             setTimeout(() => {
                 isAnimatingRef.current = false;

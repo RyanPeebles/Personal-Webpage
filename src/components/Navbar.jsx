@@ -1,5 +1,5 @@
 
-import { useRef, useLayoutEffect, useState, forwardRef, useImperativeHandle} from "react";
+import { useRef,useEffect, useLayoutEffect, useState, forwardRef, useImperativeHandle} from "react";
 import { FaArrowLeft, FaArrowRight, FaPlay, FaPause } from "react-icons/fa6";
 
 
@@ -13,6 +13,9 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
 
     const intervalRef = useRef(null);
     const timerRef = useRef(null);
+    const [currentCard, setCurrentCard] = useState(null);
+    const [prevCard, setPrevCard] = useState(null);
+    const [nextCard, setNextCard] = useState(null);
     
     
     const navBtnRef = [useRef(), useRef(), useRef(), useRef()];
@@ -25,35 +28,56 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
     // }, []);
 
     useImperativeHandle(ref, () => ({
-        callLoadAnimation: (card) => {
-            handleLoadAnimation(card);
+        recieveCurrentCard: (card) => {
+            setCurrentCard(card);
         },
-        callunloadAnimation: (card) => {
-            
-            handleUnloadAnimation(card);
+        recievePrevCard: (card) => {
+            setPrevCard(card);
+        },
+        recieveNextCard: (card) => {
+            setNextCard(card);
         }
     }));
-    const handleLoadAnimation = (currentCard) => {
-        if(currentCard) {
-        console.log("animation started for card: " ,currentCard);
-        navBtnRef[currentCard].current.setIsCurrent(true);
-        }else {
-            //navBtnRef[0].current.setIsCurrent(true);
-        }
-    };
 
-    const handleUnloadAnimation = (prevCard) => {
-        if(prevCard) {
-        // console.log("animation ended for card: " ,currentCard);
-        //navBtnRef[prevCard].current.animationSwitch("reset");
-        navBtnRef[prevCard].current.animationSwitch("unload");
+    useEffect(() => {
+        if(currentCard !== null){
+            navBtnRef[currentCard].current.animationSwitch("unload");
+        }
+
+    },[currentCard]);
+    useEffect(() => {
+        if(prevCard !== null){
+            navBtnRef[prevCard].current.animationSwitch("reset");
+        }
+
+    },[prevCard]);
+    useEffect(() => {
+        if(nextCard !== null){
+            navBtnRef[nextCard].current.animationSwitch("load");
+        }
+
+    },[nextCard]);
+    // const handleLoadAnimation = (currentCard) => {
+    //     if(currentCard) {
+    //     console.log("animation started for card: " ,currentCard);
+    //     navBtnRef[currentCard].current.setIsCurrent(true);
+    //     }else {
+    //         //navBtnRef[0].current.setIsCurrent(true);
+    //     }
+    // };
+
+    // const handleUnloadAnimation = (prevCard) => {
+    //     if(prevCard) {
+    //     // console.log("animation ended for card: " ,currentCard);
+    //     //navBtnRef[prevCard].current.animationSwitch("reset");
+    //     navBtnRef[prevCard].current.animationSwitch("unload");
         
-        }
-        else {
-           // navBtnRef[0].current.animationSwitch("reset");
-            navBtnRef[0].current.animationSwitch("unload");
-        }
-    }
+    //     }
+    //     else {
+    //        // navBtnRef[0].current.animationSwitch("reset");
+    //         navBtnRef[0].current.animationSwitch("unload");
+    //     }
+    // }
       
    
     const pause = () => {
@@ -105,13 +129,13 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
     }
     , []);
     const initBtnStates = () => {
-        navBtnRef[0].current.setIsCurrent(true);
-        navBtnRef[1].current.setIsCurrent(false);
-        navBtnRef[2].current.setIsCurrent(false);
-        navBtnRef[3].current.setIsCurrent(false);
-
+        navBtnRef[0].current.animationSwitch("unload");
         navBtnRef[1].current.animationSwitch("load");
-        ;
+        navBtnRef[2].current.animationSwitch("reset");
+        navBtnRef[3].current.animationSwitch("reset");
+
+        
+        
     }
 
     const tick = () => { 

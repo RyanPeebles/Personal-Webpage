@@ -8,13 +8,13 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
    const [isCurrent, setIsCurrent] = useState(false);
 
     const defaultAnimation = ({isNext, isCurrent}) => !isNext && !isCurrent ? 
-    ' bg-white  text-transparent bg-gradient-to-r from-[#FF4F81] to-[#FF4F81] bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-(--animate-fillText) ':
+    ' bg-white  text-transparent bg-no-repeat bg-[length:0%_100%] bg-clip-text':
     ' ';
 
-    const nextAnimation = ({isNext}) => isNext ? 
-    ' bg-secondary  text-transparent bg-gradient-to-r from-white to-white bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-fillText delay-1000':
+    const nextAnimation = ({isNext, isCurrent}) => isNext && !isCurrent ? 
+    ' bg-white  text-transparent bg-gradient-to-r from-[#FF4F81] to-[#FF4F81] bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-fillText delay-1000':
     ' ';
-    const currentAnimation = ({isCurrent}) => isCurrent ? 
+    const currentAnimation = ({isCurrent, isNext}) => isCurrent && !isNext ? 
     ' bg-secondary  text-transparent bg-gradient-to-r from-white to-white bg-no-repeat bg-left bg-[length:0%_100%] bg-clip-text animate-fillText delay-500':
     ' ';
 
@@ -41,11 +41,12 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
                 setIsNext(false);
                 setIsCurrent(true);
                 break;
-            
-            default:
-                setIsActive(false);
-                setUnLoad(false);
+            case "reset":
+                setIsNext(false);
+                setIsCurrent(false);
                 break;
+            default:
+                return;
         }
     }
 
@@ -53,15 +54,10 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
     return (
         <> 
         <button
-            //key = {reset}
-            className={currentAnimation({isCurrent: isCurrent}) + defaultAnimation({isNext: isNext, isCurrent: isCurrent}) + nextAnimation({isNext: isNext}) + ' hover:text-[#00FFD1]'}
+            key = {isCurrent && !isNext ? "current" : "else"}
+            className={currentAnimation({isCurrent: isCurrent,isNext: isNext}) + defaultAnimation({isNext: isNext,isCurrent: isCurrent}) + nextAnimation({isNext: isNext,isCurrent: isCurrent}) + ' hover:text-[#00FFD1]'}
             onClick={buttonFunction}
-            // onMouseEnter={() => {
-            //     isActiveRef.current = true;
-            // }} 
-            // onMouseLeave={() => {
-            //     isActiveRef.current =false;
-            // }}      
+                
             >
                 {textValue}
                  
