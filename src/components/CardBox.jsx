@@ -1,6 +1,7 @@
 import { useLayoutEffect, useEffect, useState, useRef, forwardRef, useImperativeHandle} from "react";
 import SlideCards from "./SlideCards";
 import FlashCard from "./FlashCard";
+import DrawingBoard from "./DrawingBoard";
 
 const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard},ref) => {
 
@@ -410,6 +411,7 @@ front-end technologies (JavaScript, HTML, CSS)"
         <SlideCards ref={cardRefs[3]}  title="Hobbies and More"  pos="absolute" >   
             
             <h3>More about my interest in Games, Art, and more!</h3>
+            <DrawingBoard />
         </SlideCards>
 
       </div>
