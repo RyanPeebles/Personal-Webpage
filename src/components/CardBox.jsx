@@ -409,9 +409,18 @@ front-end technologies (JavaScript, HTML, CSS)"
        
         </SlideCards>
         <SlideCards ref={cardRefs[3]}  title="Hobbies and More"  pos="absolute" >   
-            
-            <h3>More about my interest in Games, Art, and more!</h3>
-            <DrawingBoard />
+            {({ contentWidth, contentHeight }) => (
+                <>
+                    <h3>More about my interest in Games, Art, and more!</h3>
+                    {/* Render DrawingBoard only if contentWidth and contentHeight are positive */}
+                    {contentWidth > 0 && contentHeight > 0 && (
+                        <DrawingBoard 
+                            width={contentWidth} 
+                            height={contentHeight > 60 ? contentHeight - 80 : contentHeight * 0.5} /* Subtract ~60px for h3 & button, or use a portion if space is very small */ 
+                        />
+                    )}
+                </>
+            )}
         </SlideCards>
 
       </div>
