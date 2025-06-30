@@ -86,6 +86,8 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
         const pauseBtn = document.getElementById("pauseBtn");
         pauseBtn.style.display = "none";
         unmountInterval(); // Stop the interval
+        navBtnRef[currentCard].current.setPauseAnimation(true);
+        navBtnRef[nextCard].current.setPauseAnimation(true);
        
     }
 
@@ -96,6 +98,8 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
         pauseBtn.style.display = "block";
         resumeTimer();
         mountInterval(); // Start the interval again
+        navBtnRef[currentCard].current.setPauseAnimation(false);
+        navBtnRef[nextCard].current.setPauseAnimation(false);
        
     }
     const resumeTimer = () => {
@@ -160,17 +164,22 @@ const Navbar = forwardRef(({onCallNextBox, onCallPrevBox}, ref) => {
                         <div className='flex space-x-2 text-xl font-bold'>
                                
                                 
+                                <div className = 'flex mx-2 align-center items-center'>
+                            <ThemeToggle/>
+                            <FaPlay id="playBtn" className="text-white text-2xl hover:button-primary hidden" onClick={play}/>
+                            <FaPause id="pauseBtn" className="text-white text-2xl hover:button-primary" onClick={pause}/>
                                 
-                                <ThemeToggle/>
-                                <FaPlay id="playBtn" className="text-white text-2xl hover:button-primary hidden" onClick={play}/>
-                                <FaPause id="pauseBtn" className="text-white text-2xl hover:button-primary" onClick={pause}/>
-                                <FaArrowLeft className="text-on-background text-2xl hover:button-primary" onClick={onCallPrevBox}/>
-                                <FaArrowRight className="text-on-background text-2xl hover:button-primary" onClick={onCallNextBox}/>
-                           <NavButtons ref={navBtnRef[0]} textValue={"About Me"}></NavButtons>
+                                
+                            <FaArrowLeft className="text-on-background text-2xl hover:button-primary" onClick={onCallPrevBox}/>
+                            <FaArrowRight className="text-on-background text-2xl hover:button-primary" onClick={onCallNextBox}/>
+                            </div>
+                            <div className = 'flex p-2 align-center items-center space-x-4'>
+                            <NavButtons ref={navBtnRef[0]} textValue={"About Me"}></NavButtons>
                            
                            <NavButtons ref={navBtnRef[1]} textValue={"Projects"}></NavButtons>
                            <NavButtons ref={navBtnRef[2]} textValue={"Experience"}></NavButtons>
                            <NavButtons ref={navBtnRef[3]} textValue={"More"}></NavButtons>
+                            </div>
                            
 
                         </div>

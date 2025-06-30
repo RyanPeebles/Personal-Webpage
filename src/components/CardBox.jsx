@@ -1,6 +1,8 @@
 import { useLayoutEffect, useEffect, useState, useRef, forwardRef, useImperativeHandle} from "react";
 import SlideCards from "./SlideCards";
 import FlashCard from "./FlashCard";
+import ImageCard from "./ImageCard";
+import ImageCarousel from "./ImageCarousel";
 
 const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard},ref) => {
 
@@ -24,6 +26,39 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
     const startTops = [40, 60, 80, 100]
     const startColors = ['bg-surface3', 'bg-surface2', 'bg-surface1', 'bg-background'];
      const zIndexes = [40,30,20,10];
+     const border = ['borderCard-black', 'borderCard-2', 'borderCard-2', 'borderCard-3'];
+    const images = [{
+        Title:"Top down 2D pirate and animals",
+        src:"src/assets/pirate-Recovered.gif",
+        alt:"Top down 2D pirate and animals"   
+    },
+    {
+    
+        Title:"2D Basic Princess Sprite",
+        src:"src/assets/princess.png", 
+        alt:"2D Basic Princess Sprite"   
+    },
+    {
+        Title:"2D King Sprite",
+        src:"src/assets/king.png",    
+        alt:"2D King Sprite"    
+    },
+    {
+        Title:"2D Pirate Sprites",
+        src:"src/assets/pirateDemos.png",
+        alt:"2D Pirate Sprites"    
+    },
+    {
+        Title:"2D Evil Eye Sprite",
+        src:"src/assets/wizEye.png",
+        alt:"2D Evil Eye Sprite"  
+    }
+
+    ];
+
+
+
+
         useImperativeHandle(ref, () => ({
             callScrollDown: () => {
                 scrollDown();
@@ -63,6 +98,8 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
                 card.current.callColorChange(startColors[index]);
                 card.current.callHeight(cardHeight);
                 card.current.callZindex(zIndexes[index]);
+                card.current.callBorderChange(border[index]);
+                
             });
            
             
@@ -131,6 +168,8 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
                     cardRef.current.callZindex(0);
                    
                     cardRef.current.callColorChange(startColors[3]);
+                    cardRef.current.callBorderChange(border[3]);
+                  
                     
                 },500);
                 
@@ -201,7 +240,8 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
                     
                     
                     cardRefs[i].current.callColorChange(startColors[i]);
-                  
+                    cardRefs[i].current.callBorderChange(border[i]);
+                 
                     cardRefs[i].current.lowerTop(topStep);
                    
                     cardRefs[i].current.shrinkWidth(widthStep);
@@ -259,6 +299,9 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
                     cardRefs[i].current.raiseTop(topStep);
                     cardRefs[i].current.expandWidth(widthStep);
                     cardRefs[i].current.raiseZindex(10);
+                    cardRefs[i].current.callColorChange(startColors[i]);
+                    cardRefs[i].current.callBorderChange(border[i]);
+                    
                     
                     
                     
@@ -296,7 +339,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
             
 
             cardRefs[index].current.callColorChange(startColors[0]);
-            
+            cardRefs[index].current.callBorderChange(border[0]);
            reverseAnimation(index);
         }
         const closeDrawer = (index) => {   
@@ -307,6 +350,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
     
         const openCard = (index) => {
             cardRefs[index].current.callColorChange(startColors[0]);
+            cardRefs[index].current.callBorderChange(border[0]);
             cardRefs[index].current.callTopPosition(maxTops[index]);
             cardRefs[index].current.callZindex(40);
         }
@@ -409,7 +453,10 @@ front-end technologies (JavaScript, HTML, CSS)"
         </SlideCards>
         <SlideCards ref={cardRefs[3]}  title="Hobbies and More"  pos="absolute" >   
             
-            <h3>More about my interest in Games, Art, and more!</h3>
+            <h3>More about my interest in Food, Art, and more!</h3>
+            
+            <ImageCarousel images={images} />
+            <h2 className="text-2xl font-bold mb-1 mt-4 ">Art for my games I make as a hobby. Im a big fan of Pirates</h2>
         </SlideCards>
 
       </div>

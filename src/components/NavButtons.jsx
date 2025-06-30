@@ -4,7 +4,7 @@ import { useState,useRef, forwardRef, useImperativeHandle } from "react";
 
 const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref) => {
    const [isNext,setIsNext] = useState(false);
-   
+   const [pauseAnimation, setPauseAnimation] = useState(false);   
    const [isCurrent, setIsCurrent] = useState(false);
 
     const defaultAnimation = ({isNext, isCurrent}) => !isNext && !isCurrent ? 
@@ -12,11 +12,11 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
     ' ';
 
     const nextAnimation = ({isNext, isCurrent}) => isNext && !isCurrent ? 
-    ' bg-white  text-transparent bg-gradient-to-r from-[#FF4F81] to-[#FF4F81] bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-fillText delay-1000':
+    ' bg-white  text-transparent bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-secondary)] bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-fillText':
     ' ';
     const currentAnimation = ({isCurrent, isNext}) => isCurrent && !isNext ? 
-    ' bg-secondary  text-transparent bg-gradient-to-r from-white to-white bg-no-repeat bg-left bg-[length:0%_100%] bg-clip-text animate-fillText delay-500':
-    ' ';
+    ' bg-secondary font-bold text-transparent bg-gradient-to-r from-white to-white bg-no-repeat bg-[length:0%_100%] bg-clip-text animate-fillText scale-120':
+    ' ';    
 
 
     useImperativeHandle(ref, () => ({
@@ -26,6 +26,9 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
         },
         setIsCurrent: (state) => {
             setIsCurrent(state);
+        },
+        setPauseAnimation: (state) => {
+            setPauseAnimation(state);
         }
     }));
     
@@ -55,11 +58,12 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
         <> 
         <button
             key = {isCurrent && !isNext ? "current" : "else"}
-            className={currentAnimation({isCurrent: isCurrent,isNext: isNext}) + defaultAnimation({isNext: isNext,isCurrent: isCurrent}) + nextAnimation({isNext: isNext,isCurrent: isCurrent}) + ' hover:text-[#00FFD1]'}
+            className={currentAnimation({isCurrent: isCurrent,isNext: isNext}) + defaultAnimation({isNext: isNext,isCurrent: isCurrent}) + nextAnimation({isNext: isNext,isCurrent: isCurrent}) + ' hover:text-[#00FFD1] transition-all ease-in-out'}
             onClick={buttonFunction}
+            style={{animationPlayState: pauseAnimation ? "paused" : "running"}}
                 
             >
-                {textValue}
+                <span className="buttonFont">{textValue}</span>
                  
          </button>
         </>

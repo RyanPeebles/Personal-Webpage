@@ -15,6 +15,7 @@ const SlideCards = forwardRef(({children, pos = 'fixed', title='cardBox'}, ref) 
   const [zIndexState, setZIndexState] = useState(40);
   const [opacitiyState, setOpacityState] = useState(1);
   const [colors, setColors] = useState("bg-surface1");
+  const [border, setBorder] = useState("borderCard-3");
   const [currentTop, setCurrentTop] = useState(0);
   const [durationState, setDurationState] = useState(500);
   
@@ -27,6 +28,9 @@ const SlideCards = forwardRef(({children, pos = 'fixed', title='cardBox'}, ref) 
    useImperativeHandle(ref, () => ({
     callColorChange: (newColor) => {
       setColors(newColor);
+    },
+    callBorderChange: (newBorder) => {
+      setBorder(newBorder);
     },
     callTopPosition: (newTop) => {
       setCurrentTop(newTop);
@@ -78,7 +82,7 @@ const SlideCards = forwardRef(({children, pos = 'fixed', title='cardBox'}, ref) 
   
   return (
     <div ref={ref}  
-     className={ ` ${pos} ${colors} transition-all ease-in-out shadow-xl rounded-none p-8 m-0  text-on-background `} 
+     className={ ` ${pos} ${colors} ${border} transition-all ease-in-out shadow-xl rounded-none p-8 m-0  text-on-background `} 
      style={{
       
       top: `${currentTop}px`,

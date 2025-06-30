@@ -26,19 +26,19 @@
 
 /* Light theme */
 :root[data-theme="light"] {
-    --color-bg: #F8F9FA;
-    --color-bg-light: #FFFFFF;
-    --color-bg-lighter: #F1F3F5;
-    --color-bg-lightest: #E9ECEF;
+    --color-bg: #5A5F63;
+    --color-bg-lightest: #EAF1F5;
+    --color-bg-lighter: #D8DDE2;
+    --color-bg-light: #A9B1B8;
     --color-text: #212529;
     --color-text-muted: #6C757D;
     --color-text-dark: #343A40;
-    --color-accent-teal: #00BFA5;  /* Slightly darker for better contrast */
+    --color-accent-teal: #36A7AB;  /* Slightly darker for better contrast */
     --color-accent-teal-dark: #00897B;
     --color-accent-pink: #E91E63;  /* Slightly darker for better contrast */
     --color-accent-pink-dark: #C2185B;
-    --color-btn-primary: #00897B;
-    --color-btn-secondary: #C2185B;
+    --color-btn-primary: #36A7AB;
+    --color-btn-secondary: #E91E63;
   }
 :root{
     /* Theme Variables - Map to Tailwind's color system */
@@ -128,6 +128,35 @@ body::-webkit-scrollbar {
   .hover\:button-primary:hover { color: var(--color-btn-primary); }
   .hover\:button-secondary:hover { color: var(--color-btn-secondary); }
 
+  .borderCard-0 {
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--color-surface3);
+  }
+
+  .borderCard-1 {
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgb(32, 30, 30);
+  }
+
+  .borderCard-2 {
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgb(19, 18, 18);
+  }
+
+  .borderCard-3 {
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--color-background);
+  }
+  .borderCard-black{
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+  }
+
   .animate-fillText {
     animation: fillText 9s linear forwards;
   }
@@ -147,4 +176,13 @@ body::-webkit-scrollbar {
   .delay-1000{
     animation-delay: 1000ms;
   }
+
+}
+
+.buttonFont{
+    text-transform: uppercase;
+}
+.buttonFont::first-letter{
+    text-transform: 60em;
+    font-weight: bold;
 }
