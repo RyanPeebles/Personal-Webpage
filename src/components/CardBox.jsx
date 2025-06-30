@@ -141,7 +141,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
             };
         }, []);
 
-       
+        //Animates the card to be closed
         const handleAnimation = (index) => {
            
                const cardRef = cardRefs[index];
@@ -186,6 +186,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
             
         }
 
+        //Reverses the animation of the card to be opened
         const reverseAnimation = (index) => {
                 const cardRef = cardRefs[index];
 
@@ -219,6 +220,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
             return new Promise(resolve => setTimeout(resolve, ms));
           }
        
+        //Scrolls up
         const scrollUp = async () => {
             if(isAnimatingRef.current) {
                 return; 
@@ -267,6 +269,7 @@ const CardBox = forwardRef(({props, passCurrentCard, passPrevCard, passNextCard}
                 isAnimatingRef.current = false;
             }, 600); // Delay to match the animation duration
         }
+        //Scrolls down
         const scrollDown =  async () => {
             if(isAnimatingRef.current) {
                 return; 

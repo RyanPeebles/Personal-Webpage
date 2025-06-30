@@ -32,7 +32,7 @@ const NavButtons = forwardRef(({ textValue, image = null , buttonFunction}, ref)
         }
     }));
     
-
+    //Handles the animation switch states for the buttons
     const handleAnimationSwitch = (state) => {
         switch(state){
             case "load":

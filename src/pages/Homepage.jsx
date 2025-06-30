@@ -10,6 +10,8 @@ const Homepage = () => {
   const cardboxRef = useRef(null);
   const navBarRef = useRef(null);
 
+  //functions that are passed between siblings componenets via parent
+
   const handleCardBoxCall = () => {
 
     if(cardboxRef.current) {
