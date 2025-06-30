@@ -454,9 +454,10 @@ front-end technologies (JavaScript, HTML, CSS)"
         <SlideCards ref={cardRefs[3]}  title="Hobbies and More"  pos="absolute" >   
             
             <h3>More about my interest in Food, Art, and more!</h3>
+            <h2 className="text-2xl font-bold mb-1 mt-4 ">Art for my games I make as a hobby. Im a big fan of Pirates</h2>
+
             
             <ImageCarousel images={images} />
-            <h2 className="text-2xl font-bold mb-1 mt-4 ">Art for my games I make as a hobby. Im a big fan of Pirates</h2>
         </SlideCards>
 
       </div>
